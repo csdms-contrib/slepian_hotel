@@ -5,7 +5,7 @@ Handbook of Geomathematics, 2003-2055, 2015, <a href="http://dx.doi.org/10.1007/
 which you may cite if you find any of these routines useful! 
 
 ## Latest release
-[![DOI](https://zenodo.org/badge/6548/csdms-contrib/slepian_hotel.svg)](https://zenodo.org/badge/latestdoi/6548/csdms-contrib_hotel)
+[![DOI](https://zenodo.org/badge/6548/csdms-contrib/slepian_hotel.svg)](https://zenodo.org/badge/latestdoi/6548/csdms-contrib/slepian_hotel)
 
 
 
