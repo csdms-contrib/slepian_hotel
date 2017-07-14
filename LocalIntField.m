@@ -21,8 +21,10 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 % cola,lon  colatitude/longitude positions of the data values (both as
 %           column values), 0<=cola<=pi; 0<=lon<=2pi
 % dom       Slepian concentration target region either given as string 
-%           (one of the region names) or integer (polar cap opening angle)
-%           or two polar cap opening angles for the ring in between them
+%           (one of the region names)
+%           OR integer (polar cap opening angle in degrees)
+%           OR two polar cap opening angles for the ring in between them
+%           OR [lon lat] an ordered list defining a closed curve [degrees]
 % Lmax      Maximum spherical harmonic degree
 % J         How many Slepian functions should be used to calculate the
 %           solution? More means more sensitive to noise but higher spatial
@@ -61,7 +63,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %               squares solution
 % fnpl          path to saved evaluated matrix file
 %
-% Last modified by plattner-at-alumni.ethz.ch,  05/04/2017
+% Last modified by plattner-at-alumni.ethz.ch,  07/14/2017
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -80,8 +82,8 @@ end
 
 % If we are working with radial derivative data only:
 if length(data)==length(rad)
-
-	warning('Bandpass for only radial data not yet implemented')
+  
+  warning('Bandpass for only radial data not yet implemented')
     % Polar caps/rings?
     if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)
         [G,~]=glmalphauptoJp(dom,Lmax,avgsat,rplanet,...
@@ -103,7 +105,15 @@ if length(data)==length(rad)
         savename,dom,Lmax,avgsat,rplanet,loadJ);
     elseif ~ischar(dom) && length(dom)==2
         fnpl=sprintf('%s/%s-rad-TH%i_%i-L%i-%g-%g-Jmax%i.mat',filoc,...
-        savename,dom(1),dom(2),Lmax,avgsat,rplanet,loadJ);    
+		     savename,dom(1),dom(2),Lmax,avgsat,rplanet,loadJ);
+    elseif ~ischar(dom) && length(dom)>2
+      if exist('octave_config_info')
+	nam=builtin('hash','sha1',dom);
+      else
+	nam=hash(dom,'sha1');
+      end
+      fnpl=sprintf('%s/%s-rad-%s-L%i-%g-%g-Jmax%i.mat',filoc,...
+		   savename,nam,min(Lmax),avgsat,rplanet,loadJ);      
     end
     else
     if ischar(dom)
@@ -114,7 +124,15 @@ if length(data)==length(rad)
         savename,dom,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
     elseif ~ischar(dom) && length(dom)==2
         fnpl=sprintf('%s/%s-rad-TH%i_%i-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
-        savename,dom(1),dom(2),min(Lmax),max(Lmax),avgsat,rplanet,loadJ);    
+		     savename,dom(1),dom(2),min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
+    elseif ~ischar(dom) && length(dom)>2
+       if exist('octave_config_info')
+	nam=builtin('hash','sha1',dom);
+      else
+	nam=hash(dom,'sha1');
+       end
+       fnpl=sprintf('%s/%s-rad-%s-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
+		    savename,nam,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
     end
     end
     

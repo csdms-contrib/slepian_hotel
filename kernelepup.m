@@ -45,7 +45,7 @@ function varargout=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb)
 %
 % See also VECUPDERIVATIVE, GRADVECGLMALPHAUP, KERNELCPUP
 %
-% Last modified by plattner-at-alumni.ethz.ch, 05/26/2017
+% Last modified by plattner-at-alumni.ethz.ch, 07/14/2017
 
 defval('ngl',200)
 defval('rotb',0)
@@ -80,7 +80,11 @@ if isstr(dom)
 else
     % If, instead of a string, we have closed form coordinates, then make a
     % hash from the coordinates and use it as the filename.
-    h=hash(dom,'sha1');
+    if exist('octave_config_info')
+      h=builtin('hash','sha1',dom);
+    else
+      h=hash(dom,'sha1');
+    end
     fnpl=sprintf('%s/%s-%i-%g-%g.mat',filoc,h,Lmax,rnew,rold);  
 end
 

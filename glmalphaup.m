@@ -121,7 +121,11 @@ if upco==0 && resc==0
     if isstr(TH) % Geographic (keep the string)
       h=TH;
     else % Coordinates (make a hash)
-      h=hash(TH,'sha1');
+      if exist('octave_config_info')
+	h=builtin('hash','sha1',TH);
+      else
+	h=hash(TH,'sha1');
+      end
     end
     if lp
       fname=fullfile(getenv('IFILES'),'GLMALPHAUP',...
@@ -183,11 +187,7 @@ else
       error('Bandpass geographical tapers are not ready yet')
     end
     % Calculates the localization kernel for this domain
-    %try
-      Klmlmp=kernelcpup(L,TH,rnew,rold,sord,[],[]);
-    %catch
-    %  [Klmlmp,XY]=kernelc(L,TH,sord);
-    %end
+    Klmlmp=kernelcpup(L,TH,rnew,rold,sord,[],[]);
     
     if anti==1
       % Get the complimentary region

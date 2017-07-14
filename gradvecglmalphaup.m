@@ -5,9 +5,11 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 %
 % INPUT:
 % 
-% TH    Region name (e.g. 'africa' etc), OR opening angle of spherical cap,
-%       OR: Angles of two spherical caps and we want the ring between 
-%       them [TH1 TH2] 
+% TH    Region name (e.g. 'africa' etc),
+%       OR opening angle of spherical cap,
+%       OR Angles of two spherical caps and we want the ring between 
+%       them [TH1 TH2]
+%       OR [lon lat] an ordered list defining a closed curve [degrees]
 % L     Bandwidth (maximum angular degree), or passband (two degrees)
 % rnew  Satellite altitude
 % rold  planet radius
@@ -19,7 +21,7 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 %       vector spherical harmonics IN ADDMOUT FORMAT
 % V     Eigenvalues (conditioning values) UNSORTED FOR REGULAR REGIONS
 %
-% Last modified by plattner-at-alumni.ethz.ch, 10/14/2015
+% Last modified by plattner-at-alumni.ethz.ch, 7/14/2017
 
 defval('anti',0)
 defval('srt',1)
@@ -76,7 +78,11 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
     if isstr(TH) % Geographic (keep the string)
       h=TH;
     else % Coordinates (make a hash)
-      h=hash(TH,'sha1');
+      if exist('octave_config_info')
+	h=builtin('hash','sha1',TH);
+      else
+	h=hash(TH,'sha1');
+      end
     end
     if lp
       fname=fullfile(getenv('IFILES'),'GRADVECGLMALPHAUP',...

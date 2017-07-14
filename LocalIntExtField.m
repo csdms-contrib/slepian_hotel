@@ -21,8 +21,10 @@ function varargout=LocalIntExtField(data,rad,cola,lon,dom,LmaxIn,LmaxOut,J,rplan
 % cola,lon  colatitude/longitude positions of the data values (both as
 %           column values), 0<=cola<=pi; 0<=lon<=2pi
 % dom       Slepian concentration target region either given as string 
-%           (one of the region names) or integer (polar cap opening angle)
-%           or two polar cap opening angles for the ring in between them
+%           (one of the region names)
+%           OR integer (polar cap opening angle)
+%           OR two polar cap opening angles for the ring in between them
+%           OR [lon lat] an ordered list defining a closed curve [degrees]
 % LmaxIn    Maximum spherical harmonic degree for the internal source part
 %           or passband [Lintmin Lintmax]
 % LmaxOut   Maximum spherical harmonic degree for the external source part
@@ -68,7 +70,7 @@ function varargout=LocalIntExtField(data,rad,cola,lon,dom,LmaxIn,LmaxOut,J,rplan
 %               squares solution
 % fnpl          path to saved evaluated matrix file
 %
-% Last modified by plattner-at-alumni.ethz.ch,  8/5/2016
+% Last modified by plattner-at-alumni.ethz.ch,  7/14/2017
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -118,19 +120,36 @@ elseif length(data)==3*length(rad)
         savename,dom,LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);
     elseif ~ischar(dom) && length(dom)==2
         fnpl=sprintf('%s/%s-vec-TH%f_%f-Lin%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
-        savename,dom(1),dom(2),LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);    
+		     savename,dom(1),dom(2),LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);
+    elseif ~ischar(dom) && length(dom)>2
+      if exist('octave_config_info')
+	nam=builtin('hash','sha1',dom);
+      else
+	nam=hash(dom,'sha1');
+      end
+      fnpl=sprintf('%s/%s-vec-%s-Lin%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
+        savename,nam,LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);
     end
-     else
-%     if ischar(dom)
-%         fnpl=sprintf('%s/%s-vec-%s-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
-%         savename,dom,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
-     if ~ischar(dom) && length(dom)==1
-         fnpl=sprintf('%s/%s-vec-TH%f-Lin%i_%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
-         savename,dom,min(LmaxIn),max(LmaxIn),LmaxOut,avgsat,rplanet,router,loadJ);
-     elseif ~ischar(dom) && length(dom)==2
-         fnpl=sprintf('%s/%s-vec-TH%f_%f-Lin%i_%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
-         savename,dom(1),dom(2),min(LmaxIn),max(LmaxIn),LmaxOut,avgsat,rplanet,router,loadJ);    
-     end
+    else
+      if ischar(dom)
+         fnpl=sprintf('%s/%s-vec-%s-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
+         savename,dom,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
+      elseif ~ischar(dom) && length(dom)==1
+        fnpl=sprintf('%s/%s-vec-TH%f-Lin%i_%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
+		     savename,dom,min(LmaxIn),max(LmaxIn),LmaxOut,avgsat,rplanet,router,loadJ);
+      elseif ~ischar(dom) && length(dom)==2
+        fnpl=sprintf('%s/%s-vec-TH%f_%f-Lin%i_%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
+		     savename,dom(1),dom(2),min(LmaxIn),max(LmaxIn),LmaxOut,avgsat,rplanet,router,loadJ);
+      elseif ~ischar(dom) && length(dom)>2
+	if exist('octave_config_info')
+	  nam=builtin('hash','sha1',dom);
+	else
+	  nam=hash(dom,'sha1');
+	end
+	fnpl=sprintf('%s/%s-vec-%s-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
+         savename,nam,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
+      end
+      
     end
     
     if exist(fnpl,'file')==2 && ~isempty(savename)

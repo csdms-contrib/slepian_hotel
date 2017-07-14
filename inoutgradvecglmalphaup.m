@@ -9,8 +9,9 @@ function varargout=inoutgradvecglmalphaup(TH,Lin,Lout,rsat,rpotin,rpotout,srt)
 % 
 % TH        Region name (e.g. 'africa' etc), OR opening angle of spherical 
 %           cap, 
-%           OR: Angles of two spherical caps and we want the ring between 
-%           them [TH1 TH2] 
+%           OR Angles of two spherical caps and we want the ring between 
+%           them [TH1 TH2]
+%           OR [lon lat] an ordered list defining a closed curve [degrees]  
 % Lin       Maximum spherical-harmonic degree for inner sources
 %           or passband [Lintmin Lintmax]
 % Lout      Maximum spherical-harmonic degree for outer sources
@@ -25,7 +26,7 @@ function varargout=inoutgradvecglmalphaup(TH,Lin,Lout,rsat,rpotin,rpotout,srt)
 %       vector spherical harmonics IN ADDMOUT FORMAT
 % V     Eigenvalues (conditioning values) UNSORTED FOR REGULAR REGIONS
 %
-% Last modified by plattner-at-alumni.ethz.ch, 05/11/2016
+% Last modified by plattner-at-alumni.ethz.ch, 07/14/2017
 
 defval('anti',0)
 defval('srt',1)
@@ -57,18 +58,18 @@ if ~isstr(TH) && length(TH)==1 % POLAR CAPS
     end
        
 elseif ~isstr(TH) && length(TH)==2 % Ring between polar caps
-    defval('sord',1) % SINGLE OR DOUBLE CAP   
-    if lp
-        fname=fullfile(getenv('IFILES'),'INOUTGRADVECGLMALPHAUP',...
-		     sprintf('inoutgradvecglmalphaup-%g_%g-%i-%i-%g-%g-%g.mat',max(TH),...
-             min(TH),Lin,Lout,rsat,rpotin,rpotout));
-    elseif bp
-        fname=fullfile(getenv('IFILES'),'INOUTGRADVECGLMALPHAUP',...
-		     sprintf('inoutgradvecglmalphaup-%g_%g-%i_%i-%i-%g-%g-%g.mat',max(TH),...
-             min(TH),Lin(1),Lin(2),Lout,rsat,rpotin,rpotout));
-    else
-        error('The degree range is either one or two numbers')       
-    end
+  defval('sord',1) % SINGLE OR DOUBLE CAP   
+  if lp
+    fname=fullfile(getenv('IFILES'),'INOUTGRADVECGLMALPHAUP',...
+		   sprintf('inoutgradvecglmalphaup-%g_%g-%i-%i-%g-%g-%g.mat',max(TH),...
+			   min(TH),Lin,Lout,rsat,rpotin,rpotout));
+  elseif bp
+    fname=fullfile(getenv('IFILES'),'INOUTGRADVECGLMALPHAUP',...
+		   sprintf('inoutgradvecglmalphaup-%g_%g-%i_%i-%i-%g-%g-%g.mat',max(TH),...
+			   min(TH),Lin(1),Lin(2),Lout,rsat,rpotin,rpotout));
+  else
+    error('The degree range is either one or two numbers')       
+  end
 
          
 else % GEOGRAPHICAL REGIONS and XY REGIONS
@@ -77,7 +78,11 @@ else % GEOGRAPHICAL REGIONS and XY REGIONS
     if ischar(TH) % Geographic (keep the string)
       h=TH;
     else % Coordinates (make a hash)
-      h=hash(TH,'sha1');
+      if exist('octave_config_info')
+	h=builtin('hash','sha1',TH);
+      else
+	h=hash(TH,'sha1');
+      end
     end  
     if lp
         fname=fullfile(getenv('IFILES'),'INOUTGRADVECGLMALPHAUP',...
