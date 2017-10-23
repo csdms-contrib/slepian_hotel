@@ -1,5 +1,5 @@
-function index=subsampleDataArea(lon,lat,grdlen,minum)
-  %% index=subsampleDataArea(lon,lat,grdlen,minum)
+function index=subsampleDataArea(lon,lat,dlon,dlat,minum)
+  %% index=subsampleDataArea(lon,lat,dlon,dlat,minum)
   %
   % Returns the indices of randomly picked data points based on
   % Number of points in the equal-area cell.
@@ -8,26 +8,23 @@ function index=subsampleDataArea(lon,lat,grdlen,minum)
   %
   % lon     longitudinal coordinates of the points [degrees]
   % lat     latitudinal coordinates of the points [degrees]
-  % grdlen  grid sides on equator in degrees
+  % dlon    longitudinal grid side length on equator [degrees]
+  % dlat    latitudinal grid side length
   % minum   min number of points
   %
   % OUTPUT:
   %
   % index   logical index with "true" for selected points, "false" for thrown out
   %
-  % Last modified by plattner-at-alumni.ethz.ch, 10/22/2017
-
-  addpath('./Frederik')	
-
-  rplanet=1% It's just to show the unit cell area
+  % Last modified by plattner-at-alumni.ethz.ch, 10/23/2017
 
   %% Create equal area grid
-  epslat=grdlen/10;
+  epslat=dlat/10;
 
   c11=[min(lon),max(lat)+epslat];
-  cmn=[max(lon),min(lat)-grdlen];
+  cmn=[max(lon),min(lat)-dlat];
 
-  [latgrid,dlongrid,refarea,nmr]=authalic(c11,cmn,grdlen,grdlen,rplanet);
+  [latgrid,dlongrid,refarea,nmr]=authalic(c11,cmn,dlat,dlon);
 
   %% For each point, find out in which cell
   [celnr,rownr,colnr]=acor2ind(latgrid,dlongrid,nmr,c11,[lon(:) lat(:)]);
