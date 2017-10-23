@@ -1,9 +1,7 @@
-function index=subsampleDataTrackgapAlt(lon,lat,alt,alongtr,betweentr,rplanet)
-  %%  index=subsampleDataTrackgapAlt(lon,lat,alt,alongtr,betweentr,rplanet)
+function index=subsampleDataAlt(lon,lat,alt,alongtr,rplanet)
+  %%  index=subsampleDataAlt(lon,lat,alt,alongtr,rplanet)
   %
-  % Subsample based on altitude and along-track vs between-track
-  % distance. We assume that the tracks are roughly equally spaced
-  % and are running north-south. 
+  % Subsample based on altitude (the higher up, the lower we need the sampling rate). 
   %
   % INPUT:
   %
@@ -11,7 +9,6 @@ function index=subsampleDataTrackgapAlt(lon,lat,alt,alongtr,betweentr,rplanet)
   % lat        vector containing latitudinal positions [in degrees]
   % alt        vector containing altitude above planet surface [in km]
   % alongtr    along-track sampling interval [in degrees]
-  % betweentr  between-track sampling interval [in degrees]
   % rplanet    planet radius [in km]
   %
   % OUTPUT:
@@ -23,27 +20,16 @@ function index=subsampleDataTrackgapAlt(lon,lat,alt,alongtr,betweentr,rplanet)
   % Last modified by plattner-at-alumni.ethz.ch, 10/23/2017
   
   %% Constants
-  alongdist=(2*pi*rplanet)/(alongtr*360); % km
-  betweendisteq=(2*pi*rplanet)/(betweentr*360);  
+  alongdist=(2*pi*rplanet)/(alongtr*360); % km 
   
   %% Calculate probability to be selected based on altitude
   % Idea: we can resolve roughly the same length scale on the
   % surface as our height above the surface, and we need    
-  p1=alongdist./(alt/2);
+  p=alongdist./(alt/2);
 
-  %% Calculate probability to be selected based on between-track filtering
-
-  p2 = alongdist./(betweendisteq*cos(lat*pi/180));
-
-  %% We take the lower of the two probabilities
-  p=min(p1,p2);
-  
   %% Create a vector of uniformly randomly distributed numbers
   % to select which points live
-  pcomp=unifrnd(0,1,length(p1),1);
+  pcomp=unifrnd(0,1,length(p),1);
 
   index=( p>pcomp );
   
-
-
-
