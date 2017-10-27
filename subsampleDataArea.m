@@ -37,7 +37,7 @@ function index=subsampleDataArea(lon,lat,dlon,dlat,minum)
   p = minum./max(1,cellcount(celnr+1));
   
   %% Create uniformly randomly selected values between 0 and 1
-  pcomp=unifrnd(0,1,length(p),1);
+  pcomp=rand(length(p),1);
   
   %% We keep the points where the probability p is 
   %% greater than the randomly picked value pcomp

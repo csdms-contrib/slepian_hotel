@@ -40,7 +40,7 @@ function index=subsampleDataTrackgapAlt(lon,lat,alt,alongtr,betweentr,rplanet)
   
   %% Create a vector of uniformly randomly distributed numbers
   % to select which points live
-  pcomp=unifrnd(0,1,length(p1),1);
+  pcomp=rand(length(p1),1);
 
   index=( p>pcomp );
   

@@ -29,7 +29,7 @@ function index=subsampleDataAlt(lon,lat,alt,alongtr,rplanet)
 
   %% Create a vector of uniformly randomly distributed numbers
   % to select which points live
-  pcomp=unifrnd(0,1,length(p),1);
+  pcomp=rand(length(p),1);
 
   index=( p>pcomp );
   
