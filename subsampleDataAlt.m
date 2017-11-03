@@ -20,7 +20,7 @@ function index=subsampleDataAlt(lon,lat,alt,alongtr,rplanet)
   % Last modified by plattner-at-alumni.ethz.ch, 10/23/2017
   
   %% Constants
-  alongdist=(2*pi*rplanet)/(alongtr*360); % km 
+  alongdist=2*pi*rplanet*alongtr/360; % km 
   
   %% Calculate probability to be selected based on altitude
   % Idea: we can resolve roughly the same length scale on the
