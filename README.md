@@ -1,7 +1,7 @@
 # slepian_hotel
 Inversions using gradient vector Slepian functions (GVSF) as developed by:<br>
 Plattner &amp; Simons<br>
-Geophys.~J.~Int., 2017, <a href="http://dx.doi.org/10.1093/gji/ggx244">doi: 10.1093/gji/ggx244</a><br>
+Geophys. J. Int., 2017, <a href="http://dx.doi.org/10.1093/gji/ggx244">doi: 10.1093/gji/ggx244</a><br>
 which you may cite if you find any of these routines useful! 
 
 Research supported by NASA under grant NNX14AM29G.
