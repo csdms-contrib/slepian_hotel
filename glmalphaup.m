@@ -259,7 +259,7 @@ else
     % For the SINGLE or DOUBLE POLAR CAPS
     disp('Calculating in parallel mode')
     %try
-    %    matlabpool open
+    %    parpool
     %end
 %    for m=0:maxL
 %        Vp{m+1}=[];C{m+1}=[];

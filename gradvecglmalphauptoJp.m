@@ -74,7 +74,7 @@ H=out2on(H(:,1:J),max(L));
 %hh=waitbar(0,sprintf('Rotating the first %d Slepian functions',J));
 %disp('Calculating rotations in parallel mode')
 %try
-%matlabpool open
+%parpool
 %end
 
 % Avoid overwriting of dlmb matrix in parallel mode:
