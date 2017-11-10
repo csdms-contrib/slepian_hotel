@@ -239,7 +239,7 @@ else
     V=zeros(1,(maxLin+1)^2 - (min(Lin)+1)^2 + (Lout+1)^2-1);
     disp('Calculating in parallel mode')
     try
-        matlabpool open
+        parpool
     end
     % Now the same as in gradvecglmalphaup: Calculate the individual
     % solutions for the m and put them back in the right place

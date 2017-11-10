@@ -73,7 +73,7 @@ G=out2on(G(:,1:J),max(L));
 %h=waitbar(0,sprintf('Rotating the first %d Slepian functions',J));
 disp('Calculating rotations in parallel mode')
 %try
-%matlabpool open
+%parpool
 %end
 parfor j=1:J
     lmcosip=lmcosi;
@@ -85,7 +85,7 @@ parfor j=1:J
     Grot(:,j)=g(:);%tempry(ronm); 
 %    waitbar(j/J,h);
 end
-%matlabpool close
+%delete(gcp('nocreate'))
 %delete(h)
 V=V(1:J);
 % Transform back to addmout 

@@ -178,7 +178,7 @@ else
         V=zeros(1,ldim);
         disp('Calculating in parallel mode')
         try
-            matlabpool open
+            parpool
         end
 
         parfor mm=1:maxL+1       
