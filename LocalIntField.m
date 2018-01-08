@@ -140,7 +140,7 @@ if length(data)==length(rad)
     % .. and load it
     if exist(fnpl,'file')==2 && ~isempty(savename)
         load(fnpl)
-        fprintf('%s loaded by LocalInnerField',fnpl)
+        fprintf('%s loaded by LocalInnerField\n',fnpl)
     else
         % We need to calculate it  
         MloadJ=rGscal(G(:,1:loadJ),cola,lon,rad,rplanet,1);
