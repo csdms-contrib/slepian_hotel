@@ -51,7 +51,8 @@ dbot=dbot*1e3;
 %%% Because of numeical problems we need to rearrange this
 %%%fact=(rp.^l)./( (rp-dtop).^l - (rp-dbot).^l ) .*sqrt(l.*(2*l+1)) *rp/mu0;
 %%% Even after rearrangement: With high l, this breaks. Therefore:
-fact=( rp/(rp-dbot) ).^l .*sqrt(l.*(2*l+1)) *rp/mu0;
+%%% Don't allow dtop anymore. Then you can do
+fact= 1./( 1 - ((rp-dbot)/rp).^l  ) .*sqrt(l.*(2*l+1)) *rp/mu0;
 
 
 mcoef=coef.*fact;
