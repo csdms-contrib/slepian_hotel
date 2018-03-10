@@ -65,3 +65,10 @@ mcoef=mcoef(2:end);
 %%% The unit of F* in the expansion is 1/m^2,
 %%% so we need to multiply with 1e-6 to go from 1/km^2
 mcoef=mcoef*1e-6;
+
+
+%%% I don't yet understand why, but my magnetization results were
+%%% always sqrt(4*pi) off from other people's results. It is not because 
+%%% of the Flm2xyz plotting routine normalization. Same thing with flm,
+%%% which is unit-sphere normalized.
+mcoef=mcoef/sqrt(4*pi);
