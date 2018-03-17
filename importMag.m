@@ -16,7 +16,7 @@ function coef=importMag(fname,rplanet,Lmin,Lmax)
 % Lmax        maximum sperical-harmonic degree
 %             given in the data file
 %
-% Last modified by plattner-at-alumni.ethz.ch, 01/08/2018
+% Last modified by plattner-at-alumni.ethz.ch, 03/17/2018
 
   [~,~,~,~,~,~,~,bigl]=addmon(Lmax);
 
@@ -31,5 +31,9 @@ function coef=importMag(fname,rplanet,Lmin,Lmax)
   coef=lmcosi2coef(lmcosi);
 
   coef=coef./sqrt(2*bigl+1)*rplanet*(-1);
+
+  % The coefficients are now in 4pi normalized form.
+  % We want them in unit-normailzed form
+  coef=coef*sqrt(4*pi);
 
   
