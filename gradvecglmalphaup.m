@@ -10,6 +10,19 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 %       OR Angles of two spherical caps and we want the ring between 
 %       them [TH1 TH2]
 %       OR [lon lat] an ordered list defining a closed curve [degrees]
+%       OR several regions to add up/subtract: 
+%          struct with
+%          TH.name    for name of the combined region
+%          TH.parts   for the cell array of names of the parts, 
+%                     or cap opening angles
+%                     or [cap,lon,colat] for rotated caps
+%          TH.sign    for adding or subtracting 
+%          Example: TH.parts{1}='namerica'; TH.parts{2}='samerica';
+%                   TH.sign=[1,1]; TH.name='americas';
+%                   TH.name='weirdRing'
+%                   TH.parts{1}=30; TH.parts{2}=[5,5,10]; TH.sign=[1,-1]
+%                   subtracts the ring of cTH=5, clon=5, ccola=10 from the
+%                   larger polar cap
 % L     Bandwidth (maximum angular degree), or passband (two degrees)
 % rnew  Satellite altitude
 % rold  planet radius
@@ -26,6 +39,14 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 defval('anti',0)
 defval('srt',1)
 
+% Have to check if struct is correctly set up
+if isstruct(TH)
+  if ~(ischar(TH.name)&iscell(TH.parts)&isvector(TH.sign) )
+    error('Something wrong with the struct you used for combining regions')
+    error('Need TH.name (string) and TH.parts (cell array) and TH.sign (vector of 1 and -1)')
+  end
+end
+
 % Figure out if it's lowpass or bandpass
 lp=length(L)==1;
 bp=length(L)==2;
@@ -35,7 +56,7 @@ maxL=max(L);
 ldim=(L(2-lp)+1)^2-bp*L(1)^2;
 
 % First check if already calculated
-  if ~isstr(TH) && length(TH)==1 % POLAR CAPS
+  if ~isstr(TH) && ~isstruct(TH) && length(TH)==1 % POLAR CAPS
     defval('sord',1) % SINGLE OR DOUBLE CAP
     if lp
       fname=fullfile(getenv('IFILES'),'GRADVECGLMALPHAUP',...
@@ -51,7 +72,7 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
        % Initialize ordering matrices
     %MTAP=repmat(0,1,ldim);
     %IMTAP=repmat(0,1,ldim);
-  elseif ~isstr(TH) && length(TH)==2 % Ring between polar cap angles
+  elseif ~isstr(TH) && ~isstruct(TH) && length(TH)==2 % Ring between polar cap angles
     defval('sord',1) % SINGLE OR DOUBLE CAP
     if lp
       fname=fullfile(getenv('IFILES'),'GRADVECGLMALPHAUP',...
@@ -74,9 +95,11 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
     % an actual sum of the eigenvalues
     defval('J',ldim)
     % Note the next line, though we can change our minds
-    defval('J',ldim*spharea(TH))
+    %defval('J',ldim*spharea(TH))
     if isstr(TH) % Geographic (keep the string)
       h=TH;
+    elseif isstruct(TH)
+      h=TH.name;
     else % Coordinates (make a hash)
       if exist('octave_config_info')
 	h=builtin('hash','sha1',TH);
@@ -127,7 +150,7 @@ else
   		gamini(L(2-lp)-bp*L(1):-1:1,2)]);
       
   % For GEOGRAPHICAL REGIONS or XY REGIONS
-  if isstr(TH) || length(TH)>2
+  if isstr(TH) || isstruct(TH) || length(TH)>2
   % Initialize matrices
   %G=zeros((maxL+1)^2,ldim);
   %V=zeros(1,ldim);  
@@ -135,8 +158,35 @@ else
       error('Bandpass geographical tapers are not ready yet')
     end
 
-      Klmlmp=kernelepup(L,TH,rnew,rold);
-
+    if isstruct(TH)
+      % Several named regions. We will add them up.
+      Klmlmp=zeros((L+1)^2,(L+1)^2);
+      for reg=1:length(TH.parts)
+          % If the subregion is a named region
+          if ischar(TH.parts{reg})
+             Kreg=kernelepup(L,TH.parts{reg},rnew,rold);
+          else
+             % If the subregion is a polar cap
+             if length(TH.parts{reg})==1
+                 % North-polar cap
+                 Kreg=kernelepupcap(L,TH.parts{reg},rnew,rold);
+             else
+                 % Cap that needs to be rotated
+                 cTH=TH.parts{reg}(1);
+                 rotlon=TH.parts{reg}(2);
+                 rotcola=TH.parts{reg}(3);
+                 Kreg=kernelepupcap(L,cTH,rnew,rold,[rotlon,rotcola]);
+             end
+          end
+        Klmlmp=Klmlmp + TH.sign(reg)*Kreg;
+        
+      end
+      
+    else 
+        % If it's not a struct, it's either a string or a list of
+        % coordinates. In both cases, kernelepup takes care of it.
+        Klmlmp=kernelepup(L,TH,rnew,rold);
+    end
     
     if anti==1
       % Get the complimentary region

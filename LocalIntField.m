@@ -25,6 +25,19 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %           OR integer (polar cap opening angle in degrees)
 %           OR two polar cap opening angles for the ring in between them
 %           OR [lon lat] an ordered list defining a closed curve [degrees]
+%           OR several regions to add up/subtract (ONLY FOR VECTORIAL DATA): 
+%           struct with
+%           TH.name    for name of the combined region
+%           TH.parts   for the cell array of names of the parts, 
+%                      or cap opening angles
+%                      or [cap,lon,colat] for rotated caps
+%           TH.sign    for adding or subtracting 
+%           Example: TH.parts{1}='namerica'; TH.parts{2}='samerica';
+%                    TH.sign=[1,1]; TH.name='americas';
+%                    TH.name='weirdRing'
+%                    TH.parts{1}=30; TH.parts{2}=[5,5,10]; TH.sign=[1,-1]
+%                    subtracts the ring of cTH=5, clon=5, ccola=10 from the
+%                    larger polar cap
 % Lmax      Maximum spherical harmonic degree
 % J         How many Slepian functions should be used to calculate the
 %           solution? More means more sensitive to noise but higher spatial
@@ -63,7 +76,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %               squares solution
 % fnpl          path to saved evaluated matrix file
 %
-% Last modified by plattner-at-alumni.ethz.ch,  07/14/2017
+% Last modified by plattner-at-alumni.ethz.ch,  03/17/2018
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -187,7 +200,9 @@ if length(data)==length(rad)
 elseif length(data)==3*length(rad)
     % Vectorial case  
     % First load or calculate the Slepian function coefficients
-    if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)        
+    if isstruct(TH)
+        [H,~]=gradvecglmalphaup(dom,Lmax,avgsat,rplanet);
+    elseif (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)        
         [H,~]=gradvecglmalphauptoJp(dom,Lmax,avgsat,rplanet,...
            rotcoord(1),rotcoord(2),0,loadJ);       
     else

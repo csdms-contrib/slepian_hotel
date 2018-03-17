@@ -1,5 +1,5 @@
 function varargout=gradvecsdwcapup(TH,L,m,nth,vcut,grd,method,rnew,rold)
-% [E,V,N,th,C]=gradvecsdwcapup(TH,L,m,nth,vcut,grd,method,rnew,rold)
+% [E,V,N,th,C,K]=gradvecsdwcapup(TH,L,m,nth,vcut,grd,method,rnew,rold)
 %
 % Calculates the upward continued and derived polar cap kernel for the 
 % gradient vector spherical harmonics Elm
@@ -26,7 +26,8 @@ function varargout=gradvecsdwcapup(TH,L,m,nth,vcut,grd,method,rnew,rold)
 % E           Optimally concentrated tapers, expanded to space domain 
 % V           Eigenvalues, sorted
 % N           Sum of ALL the eigenvalues (Shannon number for ALL orders)
-% C           
+% C         
+% K
 %
 % See also GRADVECSDWCUP, KERNELEPUP, GRADVECGLMALPHAUP
 %
