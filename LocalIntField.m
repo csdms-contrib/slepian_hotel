@@ -27,15 +27,15 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %           OR [lon lat] an ordered list defining a closed curve [degrees]
 %           OR several regions to add up/subtract (ONLY FOR VECTORIAL DATA): 
 %           struct with
-%           TH.name    for name of the combined region
-%           TH.parts   for the cell array of names of the parts, 
-%                      or cap opening angles
-%                      or [cap,lon,colat] for rotated caps
-%           TH.sign    for adding or subtracting 
-%           Example: TH.parts{1}='namerica'; TH.parts{2}='samerica';
-%                    TH.sign=[1,1]; TH.name='americas';
-%                    TH.name='weirdRing'
-%                    TH.parts{1}=30; TH.parts{2}=[5,5,10]; TH.sign=[1,-1]
+%           dom.name    for name of the combined region
+%           dom.parts   for the cell array of names of the parts, 
+%                       or cap opening angles
+%                       or [cap,lon,colat] for rotated caps
+%           dom.sign    for adding or subtracting 
+%           Example: dom.parts{1}='namerica'; dom.parts{2}='samerica';
+%                    dom.sign=[1,1]; dom.name='americas';
+%                    dom.name='weirdRing'
+%                    dom.parts{1}=30; dom.parts{2}=[5,5,10]; dom.sign=[1,-1]
 %                    subtracts the ring of cTH=5, clon=5, ccola=10 from the
 %                    larger polar cap
 % Lmax      Maximum spherical harmonic degree
@@ -200,7 +200,7 @@ if length(data)==length(rad)
 elseif length(data)==3*length(rad)
     % Vectorial case  
     % First load or calculate the Slepian function coefficients
-    if isstruct(TH)
+    if isstruct(dom)
         [H,~]=gradvecglmalphaup(dom,Lmax,avgsat,rplanet);
     elseif (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)        
         [H,~]=gradvecglmalphauptoJp(dom,Lmax,avgsat,rplanet,...
