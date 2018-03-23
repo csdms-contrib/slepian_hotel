@@ -214,12 +214,15 @@ elseif length(data)==3*length(rad)
     filoc=fullfile(getenv('IFILES'),'SLEPEVAL');
     if length(Lmax)==1
     if ischar(dom)
-        fnpl=sprintf('%s/%s-vec-%s-L%i-%g-%g-Jmax%i.mat',filoc,...
-        savename,dom,Lmax,avgsat,rplanet,loadJ);
-    elseif ~ischar(dom) && length(dom)==1
+      fnpl=sprintf('%s/%s-vec-%s-L%i-%g-%g-Jmax%i.mat',filoc,...
+                   savename,dom,Lmax,avgsat,rplanet,loadJ);
+    elseif isstruct(dom)
+      fnpl=sprintf('%s/%s-vec-%s-L%i-%g-%g-Jmax%i.mat',filoc,...
+                   savename,dom.name,Lmax,avgsat,rplanet,loadJ);
+    elseif ~ischar(dom) && ~isstruct(dom)  && length(dom)==1
         fnpl=sprintf('%s/%s-vec-TH%i-L%i-%g-%g-Jmax%i.mat',filoc,...
         savename,dom,Lmax,avgsat,rplanet,loadJ);
-    elseif ~ischar(dom) && length(dom)==2
+    elseif ~ischar(dom) && ~isstruct(dom) && length(dom)==2
         fnpl=sprintf('%s/%s-vec-TH%i_%i-L%i-%g-%g-Jmax%i.mat',filoc,...
         savename,dom(1),dom(2),Lmax,avgsat,rplanet,loadJ);    
     end
