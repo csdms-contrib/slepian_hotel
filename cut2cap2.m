@@ -1,5 +1,5 @@
-function index=cut2cap2(lon,lat,rad,cTH,clon,clat)
-% index=cut2cap2(lon,lat,rad,cTH,clon,clat)
+function index=cut2cap2(lon,lat,cTH,clon,clat)
+% index=cut2cap2(lon,lat,cTH,clon,clat)
 % 
 % Removes data points outside of a spherical cap or opening angle cTH
 % centered at longitude clon and latitude clat.
@@ -8,17 +8,16 @@ function index=cut2cap2(lon,lat,rad,cTH,clon,clat)
 % 
 % lon, lat  longitudinal, latitudinal positions of the data points
 %           (in degrees)
-% rad       radial position of the data points
-% cTH       spherical cap semi-opening angle
-% clon      spherical cap center point longitude
-% clat      spherical cap center point latitude
+% cTH       spherical cap semi-opening angle [degrees]
+% clon      spherical cap center point longitude [degrees]
+% clat      spherical cap center point latitude [degrees]
 %
 % OUTPUT
 %
 % index     indices of points within the cap for the original vectors
 %           (logical index, not list of indices) 
 %
-% Last modified by plattner-at-alumni.ethz.ch, 3/13/2018
+% Last modified by plattner-at-alumni.ethz.ch, 3/30/2018
 
 % We need colatitude of center:
 ccola=90-clat;
