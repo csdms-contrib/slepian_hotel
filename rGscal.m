@@ -18,7 +18,7 @@ function rG=rGscal(coefs,theta,phi,rad,rplanet,onorout)
 %
 % OUTPUT:
 %
-% r         Matrix of evaluated Slepian functions, size J x npoints
+% rG        Matrix of evaluated Slepian functions, size J x npoints
 %
 % See also ylm
 %
