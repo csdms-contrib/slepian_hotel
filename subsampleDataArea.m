@@ -20,8 +20,9 @@ function index=subsampleDataArea(lon,lat,dlon,dlat,minum)
 
   %% Create equal area grid
   epslat=dlat/10;
+  epslon=dlon/10;
 
-  c11=[min(lon),max(lat)+epslat];
+  c11=[min(lon)-epslon,max(lat)+epslat];
   cmn=[max(lon),min(lat)-dlat];
 
   [latgrid,dlongrid,refarea,nmr]=authalic(c11,cmn,dlat,dlon);
