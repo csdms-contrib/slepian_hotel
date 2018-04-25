@@ -1,5 +1,5 @@
-function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights)
-% [coef,condi,dataweights,fnpl]=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights)
+function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0)
+% [coef,condi,dataweights,fnpl]=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0)
 %
 % Calculates potential crustal field at radius rplanet from local satellite
 % data within chosen region dom.
@@ -65,6 +65,11 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %           same size as either number of data locations or 3*number of 
 %           data locations if you want to weight each component: 
 %           [wBr wBth wBph]
+% lambda    Damping factor [default = 0]
+% coef0     reference model for damping: 
+%           min( ||A*coef - dat||^2 + lambda*||coef-coef0||^2 )
+%           [default = zeros]
+% DAMPING CURRENTLY ONLY FOR RADIAL-ONLY INVERSION
 %
 % OUTPUT:
 %
@@ -76,7 +81,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %               squares solution
 % fnpl          path to saved evaluated matrix file
 %
-% Last modified by plattner-at-alumni.ethz.ch,  03/17/2018
+% Last modified by plattner-at-alumni.ethz.ch,  04/23/2018
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -84,6 +89,8 @@ defval('loadJ',J)
 defval('savename',[])
 defval('niter',10)
 defval('weights',[])
+defval('lambda',0)
+defval('coef0',[])
 
 if length(data)==3
     data=[data{1};data{2};data{3}];
@@ -182,13 +189,23 @@ if length(data)==length(rad)
         data=weights(:).*data;
     end    
         
+    % Prepare damping if requested:
+    lambda=abs(lambda);
+    if isempty(coef0)
+      slepcoef0 = zeros(J,1);
+    else
+      % transform the provided spherical-harmonic reference 
+      % coefficients into Slepian reference coefficients
+      slepcoef0 = (G(:,1:J))'*coef0;
+    end
+
     % Start with a least squares step:
-    MM=M*M';
-    Md=M*data;
+    MM=M*M' + lambda*eye(J);
+    Md=M*data + lambda*slepcoef0;
     slepcoef=MM\Md;
 
     % And now iteratively reweighted residual calculation
-    [slepcoef,dataweights]=itweighres(M,data,slepcoef,niter);
+    [slepcoef,dataweights]=itweighres(M,data,slepcoef,niter,lambda,slepcoef0);
     
     
     % Turn the coefficients into spherical-harmonic coefficients: 

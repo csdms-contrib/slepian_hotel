@@ -8,7 +8,7 @@ function GMTmakecirc(TH,clon,ccola,fname)
 %
 % TH         Cap opening angle in degrees (see Plattner & Simons 2014 ACHA)
 % clon       Cap center longitude (degrees)
-% clat       Cap center colatitude (degrees)
+% ccola       Cap center colatitude (degrees)
 % fname      Name of file to export to
 %
 % Last modified by plattner-at-alumni.ethz.ch, 05/16/2014
