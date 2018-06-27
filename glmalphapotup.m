@@ -1,6 +1,8 @@
 function varargout=glmalphapotup(TH,L,rnew,rold,srt)
 % [G,V]=GLMALPHAPOTUP(TH,L,rnew,rold)
 %
+% This function is designed for the potential field at satellite altitude  
+%  
 % UPWARD CONTINUED AND DERIVATIVE VERSION OF:
 %
 % Returns an (lm)X(alpha) matrix with spherical harmonic coefficients of
@@ -41,7 +43,7 @@ function varargout=glmalphapotup(TH,L,rnew,rold,srt)
 %
 % With contributions from charig-at-princeton.edu, 10/10/2011
 % Last modified by fjsimons-at-alum.mit.edu, 10/11/2011
-% Last modified by plattner-at-alumni.ethz.ch, 05/09/2018 
+% Last modified by plattner-at-alumni.ethz.ch, 06/27/2018 
 
 % Should be able to update this to retain the rank order per m as well as
 % the global ordering. Does this work for the whole-sphere? In that case,
@@ -187,7 +189,6 @@ else
       error('Bandpass geographical tapers are not ready yet')
     end
     % Calculates the localization kernel for this domain
-    error('Not yet implemented for geographic regions')
     Klmlmp=kernelcppotup(L,TH,rnew,rold,sord,[],[]);
     
     if anti==1

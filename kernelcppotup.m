@@ -1,9 +1,8 @@
-function varargout=kernelcpup(Lmax,dom,rnew,rold,pars,ngl,rotb)
-% K=kernelcpup(Lmax,dom,rnew,rold,pars,ngl,rotb)
+function varargout=kernelcppotup(Lmax,dom,rnew,rold,pars,ngl,rotb)
+% K=kernelcppotup(Lmax,dom,rnew,rold,pars,ngl,rotb)
 %
-% This function is designed for the radial component of the gradient at
-% satellite altitude  
-%  
+% This function is designed for the potential field at satellite altitude  
+% 
 % Continuation-cognizant scalar Slepian kernel for the upward continuation
 % and derivative described in scalupderivative from altitude rold to rnew.
 % This is done by loading kernelcp and then upward continuing the kernel
@@ -55,7 +54,7 @@ defval('rotb',0)
 defval('pars',[])
 
 % Generic path name that I like
-filoc=fullfile(getenv('IFILES'),'KERNELCPUP');
+filoc=fullfile(getenv('IFILES'),'KERNELCPPOTUP');
 if isstr(dom)
     switch dom
       % If the domain is a square patch
@@ -94,7 +93,7 @@ end
 % If the continued kernel already exists, load it.
 if exist(fnpl,'file')==2 && ~isstr(ngl)      
     load(fnpl)
-    disp(sprintf('%s loaded by KERNELCPUP',fnpl))
+    disp(sprintf('%s loaded by KERNELCPPOTUP',fnpl))
 else
     % Otherwise obtain the uncontinued kernel and continue it.
     try
@@ -104,10 +103,10 @@ else
     end
     % Now calculate AKA' = (A(AK)')'
     disp('Multiplication with A')
-    K=scalupderivative(K,rnew,rold,Lmax,0);% This is AK
+    K=potup(K,rnew,rold,Lmax,0);% This is AK
     K=K';% This is (AK)'
     disp('Multiplication with Aprime')
-    K=scalupderivative(K,rnew,rold,Lmax,0);% This is A(AK)'
+    K=potup(K,rnew,rold,Lmax,0);% This is A(AK)'
     K=K';% This is (A(AK)')'=AKA';
     % In order to avoid numerical desymmetrification:
     K=(K+K')/2;

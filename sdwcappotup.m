@@ -1,6 +1,8 @@
 function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcappotup(TH,L,m,nth,vcut,grd,method,rnew,rold)
 % [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=SDWCAPPOTUP(TH,L,m,nth,vcut,grd,method,rnew,rold)
 %
+% This function is designed for the potential field at satellite altitude
+%  
 % UPWARD CONTINUED AND DERIVED VERSION OF:
 % Scalar spherical Slepian function for upward continued spherical hemonics
 % for a polar cap.

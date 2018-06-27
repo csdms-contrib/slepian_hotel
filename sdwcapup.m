@@ -1,6 +1,9 @@
 function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcapup(TH,L,m,nth,vcut,grd,method,rnew,rold)
 % [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=SDWCAPUP(TH,L,m,nth,vcut,grd,method,rnew,rold)
 %
+% This function is designed for the radial component of the gradient at
+% satellite altitude  
+%  
 % UPWARD CONTINUED AND DERIVED VERSION OF:
 % Scalar spherical Slepian function for upward continued spherical hemonics
 % for a polar cap.

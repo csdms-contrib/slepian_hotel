@@ -1,6 +1,9 @@
 function varargout=glmalphaup(TH,L,rnew,rold,srt)
 % [G,V]=GLMALPHAUP(TH,L,rnew,rold)
 %
+% This function is designed for the radial component of the gradient at
+% satellite altitude  
+%   
 % UPWARD CONTINUED AND DERIVATIVE VERSION OF:
 %
 % Returns an (lm)X(alpha) matrix with spherical harmonic coefficients of
