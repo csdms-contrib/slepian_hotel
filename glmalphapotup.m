@@ -185,9 +185,9 @@ else
     % Initialize matrices
     G=repmat(0,(maxL+1)^2,ldim);
     V=repmat(0,1,ldim);             
-    if bp
-      error('Bandpass geographical tapers are not ready yet')
-    end
+    %if bp
+    %  error('Bandpass geographical tapers are not ready yet')
+    %end
     % Calculates the localization kernel for this domain
     Klmlmp=kernelcppotup(L,TH,rnew,rold,sord,[],[]);
     
@@ -202,7 +202,7 @@ else
     V=fliplr(V);
     G=G(:,fliplr(isrt));
     
-    [a,b,c,d,e,f,ems,els,R1,R2]=addmon(L);
+    [a,b,c,d,e,f,ems,els,R1,R2]=addmon(max(L));
     % This indexes the orders of G back as 0 -101 -2-1012 etc
     G=G(R1,:);
     % Check indexing
@@ -215,8 +215,8 @@ else
     if lp
       % Is the Shannon number right? Need the area of the region
       difer(ldim*Klmlmp(1)-N,[],[],mesg)
-    elseif bp
-      difer(ldim*spharea(TH)-N,[],[],mesg)
+    %elseif bp
+    %  difer(ldim*spharea(TH)-N,[],[],mesg)
     end
 
 %     % Check if the expansion of a basis function is indeed either 1 or 0

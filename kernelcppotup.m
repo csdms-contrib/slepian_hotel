@@ -55,27 +55,32 @@ defval('pars',[])
 
 % Generic path name that I like
 filoc=fullfile(getenv('IFILES'),'KERNELCPPOTUP');
+if length(Lmax)==1
+    Lwrite=[0,Lmax];
+else
+    Lwrite=Lmax;
+end
 if isstr(dom)
     switch dom
       % If the domain is a square patch
      case 'sqpatch'
-      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%i-%g-%g.mat',filoc,dom,Lmax,...
+      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%i-%i-%g-%g.mat',filoc,dom,min(Lwrite),max(Lwrite),...
            round(pars(1)*180/pi),round(pars(2)*180/pi),...
            round(pars(3)*180/pi),round(pars(4)*180/pi),...
            rnew,rold);
       % If the domain is a spherical patch
      case 'patch'
-      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%g-%g.mat',filoc,dom,Lmax,...
+      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%i-%g-%g.mat',filoc,dom,min(Lwrite),max(Lwrite),...
            round(pars(1)*180/pi),round(pars(2)*180/pi),...
            round(pars(3)*180/pi),rnew,rold);
       % If the domain is a named region or a closed contour
      otherwise
-      fnpl=sprintf('%s/WREG-%s-%i-%g-%g.mat',filoc,dom,Lmax,...
+      fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g.mat',filoc,dom,min(Lwrite),max(Lwrite),...
           rnew,rold);
       % For some of the special regions it makes sense to distinguish
       % It it gets rotb=1 here, it doesn't in LOCALIZATION
        if strcmp(dom,'antarctica') && rotb==1 
-     fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g.mat',filoc,dom,Lmax,rotb,...
+     fnpl=sprintf('%s/WREG-%s-%i-%i-%i-%g-%g.mat',filoc,dom,min(Lwrite),max(Lwrite),rotb,...
          rnew,rold);
        end
     end
@@ -87,7 +92,7 @@ else
     else
       h=hash(dom,'sha1');
     end
-    fnpl=sprintf('%s/%s-%i-%g-%g.mat',filoc,h,Lmax,rnew,rold);  
+    fnpl=sprintf('%s/%s-%i-%i-%g-%g.mat',filoc,h,min(Lwrite),max(Lwrite),rnew,rold);  
 end
 
 % If the continued kernel already exists, load it.
@@ -97,16 +102,23 @@ if exist(fnpl,'file')==2 && ~isstr(ngl)
 else
     % Otherwise obtain the uncontinued kernel and continue it.
     try
-        K=kernelcp(Lmax,dom,pars,ngl,rotb);
+        K=kernelcp(max(Lmax),dom,pars,ngl,rotb);
     catch
-        K=kernelc(Lmax,dom,pars,ngl,rotb);
+        K=kernelc(max(Lmax),dom,pars,ngl,rotb);
     end
+    % Set all entries of K for l<min(Lmax) to zero
+    if length(Lmax)==2
+        maxind=(min(Lmax)+1)^2;
+        K(1:maxind,:)=zeros(maxind,size(K,2));
+        K(:,1:maxind)=zeros(size(K,2),maxind);
+    end
+    
     % Now calculate AKA' = (A(AK)')'
     disp('Multiplication with A')
-    K=potup(K,rnew,rold,Lmax,0);% This is AK
+    K=potup(K,rnew,rold,max(Lmax),0);% This is AK
     K=K';% This is (AK)'
     disp('Multiplication with Aprime')
-    K=potup(K,rnew,rold,Lmax,0);% This is A(AK)'
+    K=potup(K,rnew,rold,max(Lmax),0);% This is A(AK)'
     K=K';% This is (A(AK)')'=AKA';
     % In order to avoid numerical desymmetrification:
     K=(K+K')/2;
