@@ -1,7 +1,8 @@
-function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcappotupLatvar(TH,L,m,nth,vcut,grd,method,rplanet,rsatfun,savename)
-% [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=SDWCAPPOTUPLATVAR(TH,L,m,nth,vcut,grd,method,rplanet,rsatfun,savename)
+function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcapupLatvar(TH,L,m,nth,vcut,grd,method,rplanet,rsatfun,savename)
+% [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=SDWCAPUPLATVAR(TH,L,m,nth,vcut,grd,method,rplanet,rsatfun,savename)
 %
-% This function is designed for the potential field at satellite altitude
+% This function is designed for the radial component of the gradient
+% at satellite altitude
 % with a satellite radial position that varies with latitude, given as
 % a function handle rsatfun
 %  
@@ -48,8 +49,6 @@ function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcappotupLatvar(TH,L,m,nth,vcut,
 % Last modified by plattner-at-princeton.edu, 7/12/2018
 
 
-
-
 defval('TH',40)
 defval('L',18)
 defval('m',0)
@@ -76,14 +75,14 @@ maxL=max(L);
 ldim=(L(2-lp)+1)^2-bp*L(1)^2;
 
 % Filename of saved data
-dirname=fullfile(getenv('IFILES'),'SDWCAPPOTUPLATVAR');
+dirname=fullfile(getenv('IFILES'),'SDWCAPUPLATVAR');
 if length(TH)==1
     if lp
       fnpl=fullfile(dirname,sprintf(...
-          'SDWPOTUPLATVAR-%g-%i-%i-%i-%g-%s.mat',TH,L,nth,m,rplanet,savename));
+          'SDWUPLATVAR-%g-%i-%i-%i-%g-%s.mat',TH,L,nth,m,rplanet,savename));
     elseif bp
       fnpl=fullfile(dirname,sprintf(...
-          'SDWBLPOTUPLATVAR-%g-%i-%i-%i-%i-%g-%s.mat',TH,L(1),L(2),nth,m,...
+          'SDWBLUPLATVAR-%g-%i-%i-%i-%i-%g-%s.mat',TH,L(1),L(2),nth,m,...
           rplanet,savename));
     else
       error('The degree range should be either one or two numbers')
@@ -91,11 +90,11 @@ if length(TH)==1
 elseif length(TH)==2
     if lp
       fnpl=fullfile(dirname,sprintf(...
-          'SDWPOTUPLATVAR-%g-%g-%i-%i-%i-%g-%s.mat',...
+          'SDWUPLATVAR-%g-%g-%i-%i-%i-%g-%s.mat',...
           max(TH),min(TH),L,nth,m,rplanet,savename));
     elseif bp
       fnpl=fullfile(dirname,sprintf(...
-          'SDWBLPOTUPLATVAR-%g-%g-%i-%i-%i-%i-%g-%s.mat',...
+          'SDWBLUPLATVAR-%g-%g-%i-%i-%i-%i-%g-%s.mat',...
           max(TH),min(TH),L(1),L(2),nth,m,...
           rplanet,savename));
     else
@@ -113,7 +112,7 @@ end
 % Used matzerofix to remediate this.
 if exist(fnpl,'file')==2 && (vcut>0) & 1==3
   load(fnpl)
-  disp(sprintf('%s loaded by SDWCAPPOTUPLATVAR',fnpl))
+  disp(sprintf('%s loaded by SDWCAPUPLATVAR',fnpl))
 else
   % Get the full Shannon number
   N=ldim*(1-cos(max(TH)/180*pi))/2;
@@ -155,7 +154,7 @@ else
         % Note that this line ALSO would work with 'paul' but then it
         % would be very inefficient in not reusing the database
         Kst{whichK}(lr+1-lmin,lc+1-lmin)=...
-            legendreprodintLatvar(lr,m,lc,m,cos(TH(whichK)),method,rplanet,rsatfun)...
+            legendreprodintRadLatvar(lr,m,lc,m,cos(TH(whichK)),method,rplanet,rsatfun)...
             *sqrt(2*lr+1)*sqrt(2*lc+1)/(4*pi)*pi*(1+(m==0));       
         % Symmetrize
         Kst{whichK}(lc+1-lmin,lr+1-lmin)=...
@@ -172,16 +171,8 @@ else
       K=Kst{1};
   end
   
-%   % Now upward continue the matrix
-%   % calculate AKA' = (A(AK)')'
-%  % K=scalupderivative(K,rnew,rold,[],0,lmin:maxL);% This is AK
-%   K=potup(K,rnew,rold,[],0,lmin:maxL);% This is AK
-%   K=K';% This is (AK)'
-%   disp('Multiplication with Aprime')
-%   K=potup(K,rnew,rold,[],0,lmin:maxL);% This is A(AK)'
-%   K=K';% This is (A(AK)')'=AKA';
-  
-  
+
+   
   % In order to avoid numerical desymmetrification:
   K=(K+K')/2;
   
@@ -198,25 +189,7 @@ else
 
   % Fill in the missing degrees in case it was bandpass
   C=[zeros(lmin-m,size(C,2)) ; C];
-%   
-%   % Check normalization and get number of GL points
-%  [ngl1,ngl2,com,Vc,nofa,zmean]=orthocheck(C,V,TH,m,1,0,bp);
-%   
-%   % If it's bandpass, check the mean
-%   if bp ; difer(zmean,[],[],'Zero-mean eigenfunctions'); end
-%   
-%   if length(C)>1 & m==0 & lp
-%     % Calculate uncertainty relation
-%     sdl=sqrt(sum(repmat([0:L]'.*[1:L+1]',1,size(C,2)).*C.^2,1));
-%     NN=1;
-%     sdv=sqrt(NN*(1+(1-2/NN)*com.^2));
-%     unc=sdv./com.*sdl;
-%   else
-%     com=0;
-%     unc=0;
-%     sdl=0;
-%     sdv=0;
-%   end
+
 
   % Order eigenvalues and eigenfunctions downgoing
   [V,isrt]=sort(sum(V,1),'descend');

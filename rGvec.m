@@ -19,10 +19,12 @@ function rG=rGvec(coefs,theta,phi,rad,rplanet,onorout)
 % OUTPUT:
 %
 % r         Matrix of evaluated Slepian functions, size J x 3*npoints
+%           Order: radial, colatitudinal, longitudinal
 %
 % See also elm, rGscal
 %
 % Last modified by plattner-at-alumni.ethz.ch, 04/07/2016
+% Clarified output: plattner-at-alumni.ethz.ch, 14/07/2018
 
 defval('onorout',0)
 

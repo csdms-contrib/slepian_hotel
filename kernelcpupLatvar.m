@@ -1,7 +1,8 @@
-function varargout=kernelcppotupLatvar(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,rotb)
-% [Klmlmp,XY,K1,K]=KERNELCPPOTUPLATVAR(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,rotb)
+function varargout=kernelcpupLatvar(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,rotb)
+% [Klmlmp,XY,K1,K]=KERNELCPUPLATVAR(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,rotb)
 %
-% Altitude-cognizant potential-field Slepian functions for longitudinally
+% This function is designed for the radial component of the gradient at
+% satellite altitud for longitudinally
 % varying satellite altitudes given as a function handle  
 %  
 % Calculation of the localization matrix for some domain on the sphere.
@@ -83,7 +84,7 @@ defval('K1',NaN)
 
 if ~isstr(Lmax)
   % Generic path name that I like
-  filoc=fullfile(getenv('IFILES'),'KERNELCPPOTUPLATVAR');
+  filoc=fullfile(getenv('IFILES'),'KERNELCPUPLATVAR');
   if isstr(dom)
     switch dom
       % If the domain is a square patch
@@ -127,7 +128,7 @@ if ~isstr(Lmax)
   if exist(fnpl,'file')==2 && ~isstr(ngl)
     % Check the KERNELC directory
     load(fnpl)
-    disp(sprintf('%s loaded by KERNELCPPOTUPLATVAR',fnpl))
+    disp(sprintf('%s loaded by KERNELCPUPLATVAR',fnpl))
   else
     if strcmp(dom,'patch')
       % For future reference 
@@ -273,8 +274,8 @@ if ~isstr(Lmax)
       % Calculate the Legendre polynomials
       ind=0;
       for l=0:Lmax
-        rfact=((rsatfun(x(:))/rplanet).^(-l-1))';
-	    Xlm(:,ind+1:ind+l+1)=[rfact.*legendre(l,x(:)','sch')*sqrt(2*l+1)]';       
+        rfact=((-l-1)/rplanet*(rsatfun(x(:))/rplanet).^(-l-2))';
+	Xlm(:,ind+1:ind+l+1)=[rfact.*legendre(l,x(:)','sch')*sqrt(2*l+1)]';       
         ind=ind+l+1;
       end
       
@@ -431,7 +432,7 @@ if ~isstr(Lmax)
       end
       % This is where the save statement used to be
     end
-    disp(sprintf('KERNELCPPOTUPLATVAR (Matrix)  took %8.4f s',etime(clock,t0)))
+    disp(sprintf('KERNELCPUPLATVAR (Matrix)  took %8.4f s',etime(clock,t0)))
 
     % NOTE : THIS PIECE OF THE CODE IS REPEATED VERBATIM ABOVE
     % By whichever way you obtained the kernel, now check if you might want
