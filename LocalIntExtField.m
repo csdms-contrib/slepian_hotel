@@ -80,7 +80,10 @@ defval('niter',10)
 defval('weights',[])
 
 if length(data)==3
-    data=[data{1};data{2};data{3}];
+  useit(1)=~isempty(data{1})
+  useit(2)=~isempty(data{2});
+  useit(3)=~isempty(data{3});
+  data=[data{1};data{2};data{3}];
 end
 
 if isempty(avgsat)
@@ -88,12 +91,12 @@ if isempty(avgsat)
 end
 
 % If we are working with radial derivative data only:
-if length(data)==length(rad)
+%if length(data)==length(rad)
 
-    error('Inner and Outer solution only for vector data (so far)')
+%    error('Inner and Outer solution only for vector data (so far)')
     
     % Now the full gradient case: This is almost the same:
-elseif length(data)==3*length(rad)
+%elseif length(data)==3*length(rad)
     % Vectorial case  
     % First load or calculate the Slepian function coefficients
     if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)        
@@ -157,16 +160,18 @@ elseif length(data)==3*length(rad)
         fprintf('%s loaded by LocalInnerField\n',fnpl)
 
     else
-        % We need to calculate it  
-        MloadJ=rGvecInOut(H(:,1:loadJ),max(LmaxIn),cola,lon,rad,rplanet,router,1);
-        % And save it if dataname is provided
-        if ~isempty(savename)
-            if exist('octave_config_info') % If it's octave
-                save(fnpl,'MloadJ')
-            else
-                save(fnpl,'MloadJ','-v7.3')
-            end
-        end                
+      % We need to calculate it  
+      MloadJ=rGvecInOut(H(:,1:loadJ),max(LmaxIn),cola,lon,rad,rplanet,router,1);
+      % If we only have some of the components, only use that part of M:
+      MloadJ=MloadJ(:,repelem(useit,length(rad)));      
+      % And save it if dataname is provided
+      if ~isempty(savename)
+        if exist('octave_config_info') % If it's octave
+          save(fnpl,'MloadJ')
+        else
+          save(fnpl,'MloadJ','-v7.3')
+        end
+      end                
     end 
     
     % Now fit the data with the evaluate Slepian functions using
@@ -194,16 +199,16 @@ elseif length(data)==3*length(rad)
     MM=M*M';
     Md=M*data;
     slepcoef=MM\Md;
-
+    
     % And now iteratively reweighted residual calculation
     [slepcoef,dataweights]=itweighres(M,data,slepcoef,niter);    
     
      % Turn the coefficients into spherical-harmonic coefficients: 
     coef=H(:,1:J)*slepcoef;    
        
-else
-    error('Something is not right with the provided data')        
-end
+%else
+%    error('Something is not right with the provided data')        
+%end
 
 % Coefs are in ADDMOUT. Transform to ADDMON:
 coefIn=coef(1:(max(LmaxIn)+1)^2);
