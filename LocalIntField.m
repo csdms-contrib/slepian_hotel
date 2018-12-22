@@ -97,12 +97,11 @@ if length(data)==3
 end
 
 if isempty(avgsat)
-    rsat=mean(rad);
+    avgsat=mean(rad);
 end
 
 % If we are working with radial derivative data only:
 if length(data)==length(rad)
-  
   warning('Bandpass for only radial data not yet implemented')
     % Polar caps/rings?
     if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)
