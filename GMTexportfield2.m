@@ -41,6 +41,8 @@ function varargout=GMTexportfield2(coef,fname,planetrad,alt,cmpwrite,area,cutcir
 
 %if ~ischar(coef)
 
+warning('Did you renormalize the coefficients? Need to divide by sqrt(4*pi)')
+  
 defval('planetrad',3376) % Mars polar radius
 defval('alt',0)
 defval('cmpwrite',[1 2 3])
