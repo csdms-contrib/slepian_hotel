@@ -1,5 +1,5 @@
-function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
-% [G,V]=gradvecglmalphaup(TH,L,rnew,rold,srt)
+function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt,anti)
+% [G,V]=gradvecglmalphaup(TH,L,rnew,rold,srt,anti)
 % 
 % Construction of gradient vector Slepian functions
 %
@@ -27,6 +27,8 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 % rnew  Satellite altitude
 % rold  planet radius
 % srt   Should the Slepian functions be sorted? [default = 1 = yes]
+% anti  The opposite of the region (everything outside)? [default = 0 = no]
+%       Only for named regions or closed curves.
 %
 % OUTPUT:
 %
@@ -34,7 +36,7 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt)
 %       vector spherical harmonics IN ADDMOUT FORMAT
 % V     Eigenvalues (conditioning values) UNSORTED FOR REGULAR REGIONS
 %
-% Last modified by plattner-at-alumni.ethz.ch, 7/14/2017
+% Last modified by plattner-at-alumni.ethz.ch, 5/23/2019
 
 defval('anti',0)
 defval('srt',1)
@@ -69,9 +71,6 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
       error('The degree range is either one or two numbers')       
     end
     
-       % Initialize ordering matrices
-    %MTAP=repmat(0,1,ldim);
-    %IMTAP=repmat(0,1,ldim);
   elseif ~isstr(TH) && ~isstruct(TH) && length(TH)==2 % Ring between polar cap angles
     defval('sord',1) % SINGLE OR DOUBLE CAP
     if lp
@@ -109,12 +108,12 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
     end
     if lp
       fname=fullfile(getenv('IFILES'),'GRADVECGLMALPHAUP',...
-		     sprintf('gradvecglmalphaup-%s-%i-%i-%g-%g.mat',...
-             h,L,J,rnew,rold));
+		     sprintf('gradvecglmalphaup-%s-%i-%i-%g-%g-%i.mat',...
+             h,L,J,rnew,rold,anti));
     elseif bp
       fname=fullfile(getenv('IFILES'),'GRADVECGLMALPHAUP',...
-		     sprintf('gradvecglmalphablup-%s-%i-%i-%i-%g-%g.mat',...
-             h,L(1),L(2),J,rnew,rold));
+		     sprintf('gradvecglmalphablup-%s-%i-%i-%i-%g-%g-%i.mat',...
+             h,L(1),L(2),J,rnew,rold,anti));
     else
      error('The degree range is either one or two numbers')       
     end
@@ -185,13 +184,13 @@ else
     else 
         % If it's not a struct, it's either a string or a list of
         % coordinates. In both cases, kernelepup takes care of it.
-        Klmlmp=kernelepup(L,TH,rnew,rold);
+        Klmlmp=kernelepup(L,TH,rnew,rold,[],[],[],anti);
     end
     
-    if anti==1
-      % Get the complimentary region
-      Klmlmp=eye(size(Klmlmp))-Klmlmp;
-    end
+    % if anti==1
+    %   % Get the complimentary region
+    %   Klmlmp=eye(size(Klmlmp))-Klmlmp;
+    % end
     
     
     % Calculates the eigenfunctions/values for this localization problem

@@ -1,5 +1,5 @@
-function varargout=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb)
-% K=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb)
+function varargout=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb,anti)
+% K=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb,anti)
 %
 % Continuation-cognizant scalar Slepian kernel for the upward continuation
 % and derivative described in vecupderivative from altitude rold to rnew.
@@ -30,6 +30,7 @@ function varargout=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb)
 %            to make the integration procedure work, this option makes
 %            sure that the kernel matrix reflects this. If not, you have
 %            to apply counterrotation after diagonalizing in LOCALIZATION.
+% anti       Calculate for opposite of region (outside instead of inside)
 %
 % OUTPUT:
 %
@@ -50,6 +51,7 @@ function varargout=kernelepup(Lmax,dom,rnew,rold,pars,ngl,rotb)
 defval('ngl',200)
 defval('rotb',0)
 defval('pars',[])
+defval('anti',0)
 
 % Generic path name that I like
 filoc=fullfile(getenv('IFILES'),'KERNELEPUP');
@@ -57,24 +59,24 @@ if isstr(dom)
     switch dom
       % If the domain is a square patch
      case 'sqpatch'
-      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%i-%g-%g.mat',filoc,dom,Lmax,...
+      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%i-%g-%g-%i.mat',filoc,dom,Lmax,...
            round(pars(1)*180/pi),round(pars(2)*180/pi),...
            round(pars(3)*180/pi),round(pars(4)*180/pi),...
-           rnew,rold);
+           rnew,rold,anti);
       % If the domain is a spherical patch
      case 'patch'
-      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%g-%g.mat',filoc,dom,Lmax,...
+      fnpl=sprintf('%s/%s-%i-%i-%i-%i-%g-%g-%i.mat',filoc,dom,Lmax,...
            round(pars(1)*180/pi),round(pars(2)*180/pi),...
-           round(pars(3)*180/pi),rnew,rold);
+           round(pars(3)*180/pi),rnew,rold,anti);
       % If the domain is a named region or a closed contour
      otherwise
-      fnpl=sprintf('%s/WREG-%s-%i-%g-%g.mat',filoc,dom,Lmax,...
-          rnew,rold);
+      fnpl=sprintf('%s/WREG-%s-%i-%g-%g-%i.mat',filoc,dom,Lmax,...
+          rnew,rold,i);
       % For some of the special regions it makes sense to distinguish
       % It it gets rotb=1 here, it doesn't in LOCALIZATION
        if strcmp(dom,'antarctica') && rotb==1 
-     fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g.mat',filoc,dom,Lmax,rotb,...
-         rnew,rold);
+     fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g-%i.mat',filoc,dom,Lmax,rotb,...
+         rnew,rold,i);
        end
     end
 else
@@ -95,6 +97,9 @@ if exist(fnpl,'file')==2 && ~isstr(ngl)
 else
     % Otherwise obtain the uncontinued kernel and continue it.
     K=kernelep(Lmax,dom,pars,ngl,rotb);
+    if anti
+        K = eye(size(K))-K;
+    end
     % Now calculate BKB' = (B(BK)')'
     disp('Multiplication with B')
     K=vecupderivative(K,rnew,rold,Lmax,0);% This is BK
