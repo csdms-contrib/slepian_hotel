@@ -14,7 +14,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 % data      EITHER radial component data:
 %              column vector of values for the points given as rad,cola,lon
 %           OR vectorial data:
-%              given as data{1}=rad component, data{2}=colat component,
+%              givpien as data{1}=rad component, data{2}=colat component,
 %              data{3}=lon component, 
 %              or data is a vector of length 3*length(rad) as [rad;cola;lon]
 % rad       radial position of satellite (planet radius + altitude)
@@ -102,7 +102,9 @@ end
 
 % If we are working with radial derivative data only:
 if length(data)==length(rad)
-  warning('Bandpass for only radial data not yet implemented')
+    if length(Lmax)>1
+        warning('Bandpass for only radial data not yet implemented')
+    end
     % Polar caps/rings?
     if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)
         [G,~]=glmalphauptoJp(dom,Lmax,avgsat,rplanet,...

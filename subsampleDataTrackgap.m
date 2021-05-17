@@ -1,7 +1,7 @@
 function index=subsampleDataTrackgap(lon,lat,alt,alongtr,betweentr,rplanet)
   %%  index=subsampleDataTrackgap(lon,lat,alt,alongtr,betweentr,rplanet)
   %
-  % Subsample based on altitude and along-track vs between-track
+  % Subsample based on along-track vs between-track
   % distance. We assume that the tracks are roughly equally spaced
   % and are running north-south. 
   %

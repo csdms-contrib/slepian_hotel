@@ -2,9 +2,7 @@ function exportMag(coef,fname,rplanet)
 % exportMag(coef,fname,rplanet)  
 %
 % Exports our potential field coefficients to the
-% standard format. Don't forget to divide by sqrt(4*pi)
-% if you obtained the coefficients from an inversion
-% with LocalIntField or LocalIntExtField  
+% standard format.
 %
 % INPUT:
 %
