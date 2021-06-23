@@ -127,10 +127,10 @@ if upco==0 && resc==0
     if isstr(TH) % Geographic (keep the string)
       h=TH;
     else % Coordinates (make a hash)
-      if exist('octave_config_info')
-	h=builtin('hash','sha1',TH);
-      else
+      try
 	h=hash(TH,'sha1');
+      catch
+	h=builtin('hash','sha1',TH);
       end
     end
     if lp
@@ -236,10 +236,10 @@ else
     % Truncate to the smaller amount of eigenfunctions and -values
     G=G(:,1:J);
     V=V(1:J);
-    if exist('octave_config_info')
-      save(fname,'G','V','EL','EM','N')
-    else
+    try
       save(fname,'G','V','EL','EM','N','-v7.3')
+    catch
+      save(fname,'G','V','EL','EM','N')
     end
   else
     % For AXISYMMETRIC REGIONS
@@ -403,12 +403,12 @@ else
       % Save the results if it isn't a geographical region
       % If the variable is HUGE you must use the -v7.3 flag, if not, you
       % can safely omit it and get more backwards compatibility
-      if exist('octave_config_info')
-    	% If you are running octave
-        save(fname,'G','V','EL','EM','N','GM2AL','MTAP','IMTAP')
-      else
+      try
     	% If you are running Matlab
         save(fname,'G','V','EL','EM','N','GM2AL','MTAP','IMTAP','-v7.3')
+      catch
+      % If you are running octave
+        save(fname,'G','V','EL','EM','N','GM2AL','MTAP','IMTAP')
       end
     end
   end

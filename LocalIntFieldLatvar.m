@@ -115,10 +115,10 @@ if length(data)==length(rad)
         fnpl=sprintf('%s/%s-rad-TH%i_%i-L%i-%s-%g-Jmax%i.mat',filoc,...
 		     savename,dom(1),dom(2),Lmax,rsatfunsav,rplanet,loadJ);
     elseif ~ischar(dom) && length(dom)>2
-      if exist('octave_config_info')
-	nam=builtin('hash','sha1',dom);
-      else
+      try
 	nam=hash(dom,'sha1');
+      catch
+  nam=builtin('hash','sha1',dom);
       end
       fnpl=sprintf('%s/%s-rad-%s-L%i-%s-%g-Jmax%i.mat',filoc,...
 		   savename,nam,min(Lmax),rsatfunsav,rplanet,loadJ);      
@@ -134,10 +134,11 @@ if length(data)==length(rad)
         fnpl=sprintf('%s/%s-rad-TH%i_%i-L%i_%i-%s-%g-Jmax%i.mat',filoc,...
 		     savename,dom(1),dom(2),min(Lmax),max(Lmax),rsatfunsav,rplanet,loadJ);
     elseif ~ischar(dom) && length(dom)>2
-       if exist('octave_config_info')
-	nam=builtin('hash','sha1',dom);
-      else
-	nam=hash(dom,'sha1');
+
+       try
+	       nam=hash(dom,'sha1');
+       catch
+         nam=builtin('hash','sha1',dom);
        end
        fnpl=sprintf('%s/%s-rad-%s-L%i_%i-%s-%g-Jmax%i.mat',filoc,...
 		    savename,nam,min(Lmax),max(Lmax),rsatfunsav,rplanet,loadJ);
@@ -155,12 +156,12 @@ if length(data)==length(rad)
         % And save it if dataname is provided
         if ~isempty(savename) 
             % See if it's Octave or Matlab
-            if (exist('octave_config_info'))
-                % It's octave
-                save(fnpl,'MloadJ')
-            else
-                % It's Matlab
-                save(fnpl,'MloadJ','-v7.3')
+            try
+              % It's Matlab
+              save(fnpl,'MloadJ','-v7.3')
+            catch
+              % It's octave
+              save(fnpl,'MloadJ')
             end
         end
     end
@@ -255,12 +256,12 @@ elseif length(data)==3*length(rad)
         % And save it if dataname is provided
         if ~isempty(savename)
             % See if it's MAtlab or Octave
-            if (exist('octave_config_info'))
-                % It's Octave
-                save(fnpl,'MloadJ')
-            else
-                % Matlab
-                save(fnpl,'MloadJ','-v7.3')
+            try
+              % Matlab
+              save(fnpl,'MloadJ','-v7.3')
+            catch
+              % It's Octave
+              save(fnpl,'MloadJ')
             end
         end                
     end 

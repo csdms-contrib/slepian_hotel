@@ -94,12 +94,12 @@ V=V(1:J);
 if toout
     Grot=Grot(rinm,:);
 end
-if exist('octave_config_info')
-   % If you are running octave
-    save(fname,'Grot','V') 
-else 
-   % If you are running Matlab
-   save(fname,'Grot','V','-v7.3')
+try
+  % If you are running Matlab
+  save(fname,'Grot','V','-v7.3')
+catch
+  % If you are running octave
+  save(fname,'Grot','V') 
 end 
     
     

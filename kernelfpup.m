@@ -73,10 +73,10 @@ if ischar(dom)
 else
     % If, instead of a string, we have closed form coordinates, then make a
     % hash from the coordinates and use it as the filename.
-    if exist('octave_config_info')
-      h=builtin('hash','sha1',dom);
-    else
+    try
       h=hash(dom,'sha1');
+    catch
+      h=builtin('hash','sha1',dom);
     end
     fnpl=sprintf('%s/Fcoef_%s-%i-%g-%g.mat',filoc,h,Lmax,rsat,rpot);  
 end
@@ -97,10 +97,10 @@ else
     K=K';% This is (A(AK)')'=AKA';
     % In order to avoid numerical desymmetrification:
     K=(K+K')/2;
-    if exist('octave_config_info')% If you are running octave
-      save(fnpl,'Lmax','dom','ngl','K')
-    else
+    try
       save(fnpl,'Lmax','dom','ngl','K','-v7.3')
+    catch
+      save(fnpl,'Lmax','dom','ngl','K')
     end
 end
     

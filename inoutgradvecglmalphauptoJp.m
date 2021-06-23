@@ -112,10 +112,10 @@ end
 
 S=S(1:J);
 
-if exist('octave_config_info')
-	save(fname,'Hrot','S') 
-else
+try
 	save(fname,'Hrot','S','-v7.3')
+catch
+  save(fname,'Hrot','S') 
 end
 	
 

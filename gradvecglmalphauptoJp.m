@@ -104,12 +104,12 @@ if toout
     Hrot=Hrot(rinm,:);
 end
 
-if exist('octave_config_info')
-   % If you are running octave
-   save(fname,'Hrot','S')
-else 
-   % If you are running Matlab
-   save(fname,'Hrot','S','-v7.3')
+try 
+  % If you are running Matlab
+  save(fname,'Hrot','S','-v7.3')
+catch
+  % If you are running octave
+  save(fname,'Hrot','S')
 end  
 
 end

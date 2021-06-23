@@ -231,12 +231,12 @@ else
   % In 7.0.0.19901 (R14), in very rare cases (3-180-0-0) this
   % save is buggy, and cannot be subsequently loaded
   % Output in degrees
-  if exist('octave_config_info')% If you are running octave 
+  try
     save(fnpl,...
-	 'E','V','L','N','TH','C','th','nlon','K')
-  else
+	       'E','V','L','N','TH','C','th','nlon','K','-v7.3')
+  catch
     save(fnpl,...
-	 'E','V','L','N','TH','C','th','nlon','K','-v7.3')
+	       'E','V','L','N','TH','C','th','nlon','K')
   end
 end
 

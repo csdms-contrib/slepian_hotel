@@ -78,10 +78,10 @@ else % GEOGRAPHICAL REGIONS and XY REGIONS
     if ischar(TH) % Geographic (keep the string)
       h=TH;
     else % Coordinates (make a hash)
-      if exist('octave_config_info')
-	h=builtin('hash','sha1',TH);
-      else
+      try
 	h=hash(TH,'sha1');
+      catch
+	h=builtin('hash','sha1',TH);        
       end
     end  
     if lp
@@ -160,12 +160,11 @@ else
     Gout=Gout(2:end,:);
     % And put them together
     G=[Gin;Gout];  
-    % And save:
-    if exist('octave_config_info')
-        % If you are running octave
-        save(fname,'Lin','Lout','TH','G','V')         
-    else
-        save(fname,'Lin','Lout','TH','G','V','-v7.3') 
+    % And save:       
+    try
+      save(fname,'Lin','Lout','TH','G','V','-v7.3') 
+    catch
+      save(fname,'Lin','Lout','TH','G','V')  
     end
 else
     % And now the polar caps:
@@ -284,12 +283,12 @@ else
         G=G(:,isrt);
     end
         
-    if exist('octave_config_info')
-    	% Octave
-    	save(fname,'G','V')
-    else
+    try
     	% Matlab
     	save(fname,'G','V','-v7.3')
+    catch
+      % Octave
+    	save(fname,'G','V')
     end
     	
     

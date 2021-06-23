@@ -125,10 +125,10 @@ end
         fnpl=sprintf('%s/%s-vec-TH%f_%f-Lin%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
 		     savename,dom(1),dom(2),LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);
     elseif ~ischar(dom) && length(dom)>2
-      if exist('octave_config_info')
-	nam=builtin('hash','sha1',dom);
-      else
-	nam=hash(dom,'sha1');
+      try
+	      nam=hash(dom,'sha1');
+      catch
+        nam=builtin('hash','sha1',dom);
       end
       fnpl=sprintf('%s/%s-vec-%s-Lin%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
         savename,nam,LmaxIn,LmaxOut,avgsat,rplanet,router,loadJ);
@@ -144,10 +144,10 @@ end
         fnpl=sprintf('%s/%s-vec-TH%f_%f-Lin%i_%i-Lout%i-%g-%g-%g-Jmax%i.mat',filoc,...
 		     savename,dom(1),dom(2),min(LmaxIn),max(LmaxIn),LmaxOut,avgsat,rplanet,router,loadJ);
       elseif ~ischar(dom) && length(dom)>2
-	if exist('octave_config_info')
-	  nam=builtin('hash','sha1',dom);
-	else
+	try
 	  nam=hash(dom,'sha1');
+  catch
+    nam=builtin('hash','sha1',dom);
 	end
 	fnpl=sprintf('%s/%s-vec-%s-L%i_%i-%g-%g-Jmax%i.mat',filoc,...
          savename,nam,min(Lmax),max(Lmax),avgsat,rplanet,loadJ);
@@ -166,10 +166,10 @@ end
       MloadJ=MloadJ(:,repelem(useit,length(rad)));      
       % And save it if dataname is provided
       if ~isempty(savename)
-        if exist('octave_config_info') % If it's octave
-          save(fnpl,'MloadJ')
-        else
+        try
           save(fnpl,'MloadJ','-v7.3')
+        catch
+          save(fnpl,'MloadJ')
         end
       end                
     end 

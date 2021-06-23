@@ -100,10 +100,10 @@ ldim=(L(2-lp)+1)^2-bp*L(1)^2;
     elseif isstruct(TH)
       h=TH.name;
     else % Coordinates (make a hash)
-      if exist('octave_config_info')
-	h=builtin('hash','sha1',TH);
-      else
+      try
 	h=hash(TH,'sha1');
+      catch
+  h=builtin('hash','sha1',TH);
       end
     end
     if lp
@@ -211,12 +211,12 @@ else
     G=G(:,1:J);
     V=V(1:J);
     
-    if exist('octave_config_info')
-    % If you are running octave
-    	save(fname,'G','V','EL','EM','N')  
-    else
-    % If you are running Matlab
+    try
+      % If you are running Matlab
     	save(fname,'G','V','EL','EM','N','-v7.3')
+    catch
+      % If you are running octave
+    	save(fname,'G','V','EL','EM','N') 
     end 
     
     
@@ -260,13 +260,13 @@ else
             G=G(:,isrt);
         end
         
-        if exist('octave_config_info')
-    	% If you are running octave
-    		save(fname,'G','V','EL','EM')  
-    	else
-    	% If you are running Matlab
-    		save(fname,'G','V','EL','EM','-v7.3')
-    	end 
+ 
+    	  try
+    	    % If you are running Matlab
+    		  save(fname,'G','V','EL','EM','-v7.3')
+        catch
+          save(fname,'G','V','EL','EM')  
+        end 
         
        %save(fname,'G','V','EL','EM')
   end
