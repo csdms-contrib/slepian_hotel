@@ -46,7 +46,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %
 % Recommended:
 %
-% avgsat    Average satellite altitude for which the Slepian functions
+% avgsat    Average satellite radial position for which the Slepian functions
 %           should be calculated. The crustal magnetic field is of course 
 %           calculated taking the true radial positions into account.
 %
