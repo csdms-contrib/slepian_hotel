@@ -115,6 +115,10 @@ if length(data)==length(rad)
             [G,~]=glmalphapotup(dom,Lmax,avgsat,rplanet);
         else
             [G,V]=glmalpha(dom,Lmax);
+            if ~ischar(dom)
+                 [V,isrt]=sort(sum(V,1),'descend');
+                 G=G(:,isrt);
+            end
         end
     end
     
