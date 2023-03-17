@@ -91,7 +91,8 @@ if isstr(dom)
     if dom{2}==0; h=dom{1}; else h=[dom{1} num2str(dom{2})]; end
     buf=dom{2};
     % However, if dom{2} turns out to be zero, we should ignore it.
-    fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g.mat',filoc,h,min(Lwrite),max(Lwrite),...
+    fnpl=sprintf('%s/WREG-%s-%i.mat',filoc,h,Lmax);
+    fnpl=sprintf('%s/WREG-%s-%i-%i-%g-%g.mat',filoc,dom,min(Lwrite),max(Lwrite),...
           rnew,rold);
 else
     % If, instead of a string, we have closed form coordinates, then make a

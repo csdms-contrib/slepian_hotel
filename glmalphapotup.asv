@@ -95,7 +95,7 @@ if upco==0 && resc==0
     % Initialize ordering matrices
     MTAP=repmat(0,1,ldim);
     IMTAP=repmat(0,1,ldim);
-  elseif ~isstr(TH) && ~iscell(TH) && length(TH)==2 % Ring between polar cap angles
+  elseif ~isstr(TH) && length(TH)==2 % Ring between polar cap angles
     defval('sord',1) % SINGLE OR DOUBLE CAP
     if lp
       fname=fullfile(getenv('IFILES'),'GLMALPHAPOTUP',...
