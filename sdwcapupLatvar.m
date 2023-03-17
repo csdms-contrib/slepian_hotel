@@ -25,7 +25,7 @@ function [E,V,N,th,C,ngl1,ngl2,unc,com,sdl,K]=sdwcapupLatvar(TH,L,m,nth,vcut,grd
 % method      'gl' for Gauss-Legendre via LEGENDREPRODINT [default]
 %             'paul' for Paul via PAUL 
 % rplanet     planetary radial position
-% rsatfun     function handle for satellite radial position depending
+% rsatfun     function handle for satellite radial position depending on cos(colat)
 % savename    unique name you want to use for this function handle to
 %             save and restore the calculated kernels  
 %             on sin(latitude) or cos(colatitude)

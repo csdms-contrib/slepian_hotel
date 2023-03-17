@@ -87,7 +87,7 @@ defval('coef0',[])
 
 if length(data)==3
   data=[data{1};data{2};data{3}];
-  error('Not yet implemented')
+  error('Not yet implemented. Use only Br for now!')
 end
 
 

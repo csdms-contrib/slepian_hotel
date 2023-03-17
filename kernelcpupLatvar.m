@@ -2,8 +2,8 @@ function varargout=kernelcpupLatvar(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,r
 % [Klmlmp,XY,K1,K]=KERNELCPUPLATVAR(Lmax,dom,rplanet,rsatfun,savename,pars,ngl,rotb)
 %
 % This function is designed for the radial component of the gradient at
-% satellite altitud for longitudinally
-% varying satellite altitudes given as a function handle  
+% satellite altitude for longitudinally  varying satellite altitudes
+% given as a function handle  
 %  
 % Calculation of the localization matrix for some domain on the sphere.
 % NOT FOR POLAR PATCHES! AND NOT GOOD FOR NEAR-POLAR PATCHES! (See GRUNBAUM)
