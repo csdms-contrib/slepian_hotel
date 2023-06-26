@@ -55,7 +55,7 @@ function varargout=kernelcppotupNoise(Lmax,dom,rnew,rold,pars,ngl,rotb,Ninv,Ndet
 defval('ngl',200)
 defval('rotb',0)
 defval('pars',[])
-defval('Ninv',diag(ones(1,(max(Lmax)+1)^2)))
+%defval('Ninv',diag(ones(1,(max(Lmax)+1)^2)))
 
 % Generic path name that I like
 filoc=fullfile(getenv('IFILES'),'KERNELCPPOTUPNOISE');
