@@ -80,6 +80,7 @@ function varargout=makelocalfield(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rot
 % dataweights   Final weights used in the iteratively reweighted least 
 %               squares solution
 % fnpl          path to saved evaluated matrix file
+% G             The matrix of eigenfunctions
 %
 % Last modified by plattner-at-alumni.ethz.ch,  04/23/2018
 
@@ -250,7 +251,7 @@ else
 end   
 
 
-varns={coef,condi,dataweights,fnpl};
+varns={coef,condi,dataweights,fnpl,G};
 varargout=varns(1:nargout);
 
 end

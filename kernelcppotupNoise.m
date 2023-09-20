@@ -135,16 +135,30 @@ else
         K(:,1:maxind)=zeros(size(K,2),maxind);
     end
     
-    % Calculate D N^-1 D
-    K = K*Ninv*K;
+    % % Calculate D N^-1 D
+    % [G,V] = glmalpha(dom,Lmax);
+    % G = out2on(G,Lmax);
+    % M = G*diag(sqrt(abs(V)));
+    % % K = M*M'
+    % K = M*Ninv*M';
+    % 
+    %norm(K-Ninv*K)
 
-    % % Now calculate AKA' = (A(AK)')'
-    % disp('Multiplication with A')
-    % K=potup(K,rnew,rold,max(Lmax),0);% This is AK
-    % K=K';% This is (AK)'
-    % disp('Multiplication with Aprime')
-    % K=potup(K,rnew,rold,max(Lmax),0);% This is A(AK)'
-    % K=K';% This is (A(AK)')'=AKA';
+    % N-1/2 * D * N-1 * D * N-1/2
+    K = sqrt(Ninv)*K*Ninv*K*sqrt(Ninv);
+
+    %K = Ninv * K * Ninv; % These all symmetric
+
+    %K = K'*Ninv*K; % These are all symmetric
+
+
+    % Now calculate AKA' = (A(AK)')'
+    disp('Multiplication with A')
+    K=potup(K,rnew,rold,max(Lmax),0);% This is AK
+    K=K';% This is (AK)'
+    disp('Multiplication with Aprime')
+    K=potup(K,rnew,rold,max(Lmax),0);% This is A(AK)'
+    K=K';% This is (A(AK)')'=AKA';
     % In order to avoid numerical desymmetrification:
     K=(K+K')/2;
     try
