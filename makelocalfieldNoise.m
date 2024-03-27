@@ -1,4 +1,4 @@
-function varargout=makelocalfield(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0,altcog)
+function varargout=makelocalfieldNoise(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0,altcog,Ninv,Ndetails)
 % [coef,condi,dataweights,fnpl]=makelocalfield(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0)
 %
 % Calculates potential crustal field at radius rplanet from local satellite
@@ -80,7 +80,8 @@ function varargout=makelocalfield(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rot
 % dataweights   Final weights used in the iteratively reweighted least 
 %               squares solution
 % fnpl          path to saved evaluated matrix file
-% G             The matrix of eigenfunctions
+% G             The matrix of eigenfunctions 
+% 
 %
 % Last modified by plattner-at-alumni.ethz.ch,  04/23/2018
 
@@ -93,6 +94,15 @@ defval('weights',[])
 defval('lambda',0)
 defval('coef0',[])
 defval('altcog',1)
+defval('Ninv',diag(ones(1,(max(Lmax)+1)^2)))
+
+% % Make a hash from the matrix
+% try
+%    h2=hash(Ninv,'sha1');
+% catch
+%    h2=builtin('hash','sha1',Ninv);
+% end
+
 
 if length(data)==3
     data=[data{1};data{2};data{3}];
@@ -113,7 +123,7 @@ if length(data)==length(rad)
             rotcoord(1),rotcoord(2),0,loadJ);        
     else
         if altcog
-            [G,~]=glmalphapotup(dom,Lmax,avgsat,rplanet);
+            [G,~]=glmalphapotupNoise(dom,Lmax,avgsat,rplanet,[],Ninv,Ndetails);
         else
             [G,V]=glmalpha(dom,Lmax);
             if ~ischar(dom)
@@ -129,8 +139,8 @@ if length(data)==length(rad)
     
     if length(Lmax)==1
     if ischar(dom)
-        fnpl=sprintf('%s/%s-rad-%s-L%i-%g-%g-Jmax%i.mat',filoc,...
-        savename,dom,Lmax,avgsat,rplanet,loadJ);
+        fnpl=sprintf('%s/%s-rad-%s-L%i-%g-%g-Jmax%i-%s.mat',filoc,...
+        savename,dom,Lmax,avgsat,rplanet,loadJ,Ndetails);
     elseif iscell(dom)
         % We have a cell, and we expect the format to be {'greenland' 1.0}
         % where we have a region and want to add a buffer region around it.
