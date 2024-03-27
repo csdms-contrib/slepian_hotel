@@ -38,7 +38,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %                    dom.parts{1}=30; dom.parts{2}=[5,5,10]; dom.sign=[1,-1]
 %                    subtracts the ring of cTH=5, clon=5, ccola=10 from the
 %                    larger polar cap
-% Lmax      Maximum spherical harmonic degree
+% Lmax      Maximum spherical harmonic degree (or two numbers for bandpass)
 % J         How many Slepian functions should be used to calculate the
 %           solution? More means more sensitive to noise but higher spatial
 %           resolution
@@ -81,7 +81,7 @@ function varargout=LocalIntField(data,rad,cola,lon,dom,Lmax,J,rplanet,avgsat,rot
 %               squares solution
 % fnpl          path to saved evaluated matrix file
 %
-% Last modified by plattner-at-alumni.ethz.ch,  04/23/2018
+% Last modified by plattner-at-alumni.ethz.ch,  03/27/2024
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -311,6 +311,11 @@ elseif length(data)==3*length(rad)
        
 else
     error('Something is not right with the provided data')        
+end
+
+% Set coefficient values for degrees 0 to Lmin to Zero
+if length(Lmax)>1
+  coef = [zeros(min(Lmax)^2,1);coef];
 end
 
 % Coefs are in ADDMOUT. Transform to ADDMON:
