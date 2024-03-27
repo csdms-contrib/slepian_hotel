@@ -23,7 +23,11 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt,anti)
 %                   TH.parts{1}=30; TH.parts{2}=[5,5,10]; TH.sign=[1,-1]
 %                   subtracts the ring of cTH=5, clon=5, ccola=10 from the
 %                   larger polar cap
-% L     Bandwidth (maximum angular degree), or passband (two degrees)
+% L     Maximum spherical harmonic degree or passband (two degrees)
+%        WARNING: For symmetric region, a passband creates a sparse matrix
+%        of size (Lmax+1)^2x( (Lmax+1)^2 - Lmin^2 )
+%        But for named regions, the passband creates a full matrix of size 
+%        ( (Lmax+1)^2 - Lmin^2 ) x ( (Lmax+1)^2 - Lmin^2 )
 % rnew  Satellite altitude
 % rold  planet radius
 % srt   Should the Slepian functions be sorted? [default = 1 = yes]
@@ -153,28 +157,28 @@ else
   % Initialize matrices
   %G=zeros((maxL+1)^2,ldim);
   %V=zeros(1,ldim);  
-    if bp
-      error('Bandpass geographical tapers are not ready yet')
-    end
+    %if bp
+      %error('Bandpass geographical tapers are not ready yet')
+    %end
 
     if isstruct(TH)
       % Several named regions. We will add them up.
-      Klmlmp=zeros((L+1)^2,(L+1)^2);
+      Klmlmp=zeros((maxL+1)^2,(maxL+1)^2);
       for reg=1:length(TH.parts)
           % If the subregion is a named region
           if ischar(TH.parts{reg})
-             Kreg=kernelepup(L,TH.parts{reg},rnew,rold);
+             Kreg=kernelepup(maxL,TH.parts{reg},rnew,rold);
           else
              % If the subregion is a polar cap
              if length(TH.parts{reg})==1
                  % North-polar cap
-                 Kreg=kernelepupcap(L,TH.parts{reg},rnew,rold);
+                 Kreg=kernelepupcap(maxL,TH.parts{reg},rnew,rold);
              else
                  % Cap that needs to be rotated
                  cTH=TH.parts{reg}(1);
                  rotlon=TH.parts{reg}(2);
                  rotcola=TH.parts{reg}(3);
-                 Kreg=kernelepupcap(L,cTH,rnew,rold,[rotlon,rotcola]);
+                 Kreg=kernelepupcap(maxL,cTH,rnew,rold,[rotlon,rotcola]);
              end
           end
         Klmlmp=Klmlmp + TH.sign(reg)*Kreg;
@@ -184,22 +188,31 @@ else
     else 
         % If it's not a struct, it's either a string or a list of
         % coordinates. In both cases, kernelepup takes care of it.
-        Klmlmp=kernelepup(L,TH,rnew,rold,[],[],[],anti);
+        Klmlmp=kernelepup(maxL,TH,rnew,rold,[],[],[],anti);
     end
-    
+
     % if anti==1
     %   % Get the complimentary region
     %   Klmlmp=eye(size(Klmlmp))-Klmlmp;
     % end
     
-    
+    [~,~,~,~,~,~,~,~,R1,~]=addmon(maxL);
+    % Here is the bandpass part. Just cut out the degrees less than min(L)
+    if length(L)>1
+        botL = (min(L))^2;
+        Klmlmp=Klmlmp(botL+1:end,botL+1:end);
+        [~,~,~,~,~,~,~,~,R1,~]=addmon(maxL);
+        R1 = R1(botL+1:end) - botL;
+    end
+
     % Calculates the eigenfunctions/values for this localization problem
     [G,V]=eig(Klmlmp);
     [V,isrt]=sort(sum(real(V),1));
     V=fliplr(V);
     G=G(:,fliplr(isrt));
     
-    [a,b,c,d,e,f,ems,els,R1,R2]=addmon(L);
+    %[a,b,c,d,e,f,ems,els,R1,R2]=addmon(L);
+  
     % This indexes the orders of G back as 0 -101 -2-1012 etc
     G=G(R1,:);
     % Check indexing
