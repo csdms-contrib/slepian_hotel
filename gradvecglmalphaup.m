@@ -24,10 +24,6 @@ function varargout=gradvecglmalphaup(TH,L,rnew,rold,srt,anti)
 %                   subtracts the ring of cTH=5, clon=5, ccola=10 from the
 %                   larger polar cap
 % L     Maximum spherical harmonic degree or passband (two degrees)
-%        WARNING: For symmetric region, a passband creates a sparse matrix
-%        of size (Lmax+1)^2x( (Lmax+1)^2 - Lmin^2 )
-%        But for named regions, the passband creates a full matrix of size 
-%        ( (Lmax+1)^2 - Lmin^2 ) x ( (Lmax+1)^2 - Lmin^2 )
 % rnew  Satellite altitude
 % rold  planet radius
 % srt   Should the Slepian functions be sorted? [default = 1 = yes]
@@ -196,13 +192,11 @@ else
     %   Klmlmp=eye(size(Klmlmp))-Klmlmp;
     % end
     
-    [~,~,~,~,~,~,~,~,R1,~]=addmon(maxL);
+   
     % Here is the bandpass part. Just cut out the degrees less than min(L)
     if length(L)>1
         botL = (min(L))^2;
         Klmlmp=Klmlmp(botL+1:end,botL+1:end);
-        [~,~,~,~,~,~,~,~,R1,~]=addmon(maxL);
-        R1 = R1(botL+1:end) - botL;
     end
 
     % Calculates the eigenfunctions/values for this localization problem
@@ -211,7 +205,14 @@ else
     V=fliplr(V);
     G=G(:,fliplr(isrt));
     
-    %[a,b,c,d,e,f,ems,els,R1,R2]=addmon(L);
+    % Put the zeros for the skipped degrees
+    if length(L)>1
+        addZeros = zeros(botL,size(G,2));
+        G = [addZeros;G];
+    end
+
+
+    [a,b,c,d,e,f,ems,els,R1,R2]=addmon(maxL);
   
     % This indexes the orders of G back as 0 -101 -2-1012 etc
     G=G(R1,:);
