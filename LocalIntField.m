@@ -313,10 +313,6 @@ else
     error('Something is not right with the provided data')        
 end
 
-% Set coefficient values for degrees 0 to Lmin to Zero
-if length(Lmax)>1
-  coef = [zeros(min(Lmax)^2,1);coef];
-end
 
 % Coefs are in ADDMOUT. Transform to ADDMON:
 coef=out2on(coef,max(Lmax));
