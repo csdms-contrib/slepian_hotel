@@ -11,12 +11,12 @@ function varargout=LocalIntExtField(data,rad,cola,lon,dom,LmaxIn,LmaxOut,J,rplan
 %
 % Required:
 %
-% data      EITHER radial component data:
-%              column vector of values for the points given as rad,cola,lon
-%           OR vectorial data:
-%              given as data{1}=rad component, data{2}=colat component,
-%              data{3}=lon component, 
-%              or data is a vector of length 3*length(rad) as [rad;cola;lon]
+% data      vectorial data given as data{1}=rad component, 
+%              data{2}=colat component,
+%              data{3}=lon component.
+%              You can also skip components, for example data{2} = []
+%              If all components are providedn, then the data can also be given as a 
+%              single vector of length 3*length(rad) as [rad;cola;lon]
 % rad       radial position of satellite (planet radius + altitude)
 % cola,lon  colatitude/longitude positions of the data values (both as
 %           column values), 0<=cola<=pi; 0<=lon<=2pi
@@ -71,6 +71,7 @@ function varargout=LocalIntExtField(data,rad,cola,lon,dom,LmaxIn,LmaxOut,J,rplan
 % fnpl          path to saved evaluated matrix file
 %
 % Last modified by plattner-at-alumni.ethz.ch,  7/14/2017
+% Small change by platner-at-alumni.ethz.ch, 6/7/2024
 
 defval('avgsat',[])
 defval('rotcoord',[0 0])
@@ -79,24 +80,25 @@ defval('savename',[])
 defval('niter',10)
 defval('weights',[])
 
+% If we are working with radial derivative data only:
+if length(data)==length(rad)
+    error('Provide radial only data as data{1} = Br; data{2} = []; data{3} = [];')
+end
+
 if length(data)==3
-  useit(1)=~isempty(data{1})
+  useit(1)=~isempty(data{1});
   useit(2)=~isempty(data{2});
   useit(3)=~isempty(data{3});
   data=[data{1};data{2};data{3}];
+else
+    useit=[1,1,1];
 end
 
 if isempty(avgsat)
     avgsat=mean(rad);
 end
 
-% If we are working with radial derivative data only:
-%if length(data)==length(rad)
 
-%    error('Inner and Outer solution only for vector data (so far)')
-    
-    % Now the full gradient case: This is almost the same:
-%elseif length(data)==3*length(rad)
     % Vectorial case  
     % First load or calculate the Slepian function coefficients
     if (~ischar(dom)) & (rotcoord(1)~=0 || rotcoord(2)~=0)        
@@ -163,7 +165,7 @@ end
       % We need to calculate it  
       MloadJ=rGvecInOut(H(:,1:loadJ),max(LmaxIn),cola,lon,rad,rplanet,router,1);
       % If we only have some of the components, only use that part of M:
-      MloadJ=MloadJ(:,repelem(useit,length(rad)));      
+      MloadJ=MloadJ(:,logical(repelem(useit,length(rad))));      
       % And save it if dataname is provided
       if ~isempty(savename)
         try
