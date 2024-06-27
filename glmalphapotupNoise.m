@@ -221,7 +221,7 @@ else
     V=fliplr(V);
     G=G(:,fliplr(isrt));
     % change gtilde back to g
-    G = Ninv^(-1/2)*G;
+    %G = Ninv^(1/2)*G;
     
     [a,b,c,d,e,f,ems,els,R1,R2]=addmon(max(L));
     % This indexes the orders of G back as 0 -101 -2-1012 etc
