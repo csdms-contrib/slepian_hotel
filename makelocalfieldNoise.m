@@ -1,4 +1,4 @@
-function varargout=makelocalfieldNoise(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0,altcog,Ninv,Ndetails)
+function varargout=makelocalfieldNoise(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0,altcog,Ninv,Ndetails,NClmlmp)
 % [coef,condi,dataweights,fnpl]=makelocalfield(data,rad,lat,lon,dom,Lmax,J,rplanet,avgsat,rotcoord,loadJ,savename,niter,weights,lambda,coef0)
 %
 % Calculates potential crustal field at radius rplanet from local satellite
@@ -123,7 +123,7 @@ if length(data)==length(rad)
             rotcoord(1),rotcoord(2),0,loadJ);        
     else
         if altcog
-            [G,~]=glmalphapotupNoise(dom,Lmax,avgsat,rplanet,[],Ninv,Ndetails);
+            [G,~]=glmalphapotupNoise(dom,Lmax,avgsat,rplanet,[],Ninv,Ndetails,NClmlmp);
         else
             [G,V]=glmalpha(dom,Lmax);
             if ~ischar(dom)

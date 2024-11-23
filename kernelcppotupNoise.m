@@ -145,11 +145,11 @@ else
     %norm(K-Ninv*K)
 
     % N-1/2 * D * N-1 * D * N-1/2
-    K = sqrt(Ninv)*K*Ninv*K*sqrt(Ninv);
+    %K = sqrt(Ninv)*K*Ninv*K*sqrt(Ninv);
 
     %K = Ninv * K * Ninv; % These all symmetric
 
-    %K = K'*Ninv*K; % These are all symmetric
+    K = K'*Ninv*K*Ninv; % These are all symmetric
 
 
     % Now calculate AKA' = (A(AK)')'

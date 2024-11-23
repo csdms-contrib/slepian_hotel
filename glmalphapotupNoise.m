@@ -1,4 +1,4 @@
-function varargout=glmalphapotupNoise(TH,L,rnew,rold,srt,Ninv,Ndetails)
+function varargout=glmalphapotupNoise(TH,L,rnew,rold,srt,Ninv,Ndetails,NClmlmp)
 % [G,V]=GLMALPHAPOTUP(TH,L,rnew,rold)
 %
 % This function is designed for the potential field at satellite altitude  
@@ -216,6 +216,7 @@ else
     end
 
     % Calculates the eigenfunctions/values for this localization problem
+    %[G,V]=eig(Klmlmp,NClmlmp);
     [G,V]=eig(Klmlmp);
     [V,isrt]=sort(sum(real(V),1));
     V=fliplr(V);
